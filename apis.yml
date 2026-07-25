@@ -14,12 +14,19 @@ description: >-
   network brokers send one question set to a panel of insurers for instant comparative quotes and which
   transacted over $1.5 billion in GWP in CY25 across 9 insurer lines and 23 connected partners; SCTP and
   the INSIGHT policy management platform are being consolidated into a broader "Steadfast Apps" broking
-  platform. API posture, recorded honestly - Steadfast Group publishes NO public, self-serve developer
-  portal and NO downloadable API specification. A full crawl of all 311 pages in the public sitemap
-  returned zero references to a developer portal, REST API, OpenAPI, or Swagger. The only integration
-  surfaces are partner-gated: broker.steadfast.com.au is a credentialed broker login wall, and
-  api.steadfast.com.au is a live but undocumented host returning HTTP 403 at the root and 404 on every
-  probed documentation path. Insurer and partner connectivity into SCTP is arranged commercially, not
+  platform. API posture, recorded honestly - Steadfast Group publishes NO developer portal, NO API
+  documentation and NO specification of any kind, and a full crawl of all 311 pages in the public
+  sitemap returned zero references to a developer portal, REST API, OpenAPI or Swagger. Two genuinely
+  machine-readable surfaces nonetheless exist and neither is announced anywhere. The consumer Flood
+  Risk Tracker is backed by a public, anonymous, undocumented JSON API that resolves Australian
+  addresses against the national G-NAF dataset and returns Swiss Re river-flood and storm-surge risk
+  layers, returning RFC 9457 problem details and advertising api-supported-versions 1.0; the OpenAPI
+  in this record was derived from the tool's own client JavaScript and from live probes. Separately,
+  idp.steadfast.com.au is an Okta-hosted OpenID Connect provider publishing a complete anonymous
+  discovery document with PKCE S256 and DPoP, though client registration is commercially gated. The
+  commercial surfaces remain closed: broker.steadfast.com.au is a credentialed broker login wall, and
+  api.steadfast.com.au and api-sf.steadfast.com.au are live but undocumented hosts returning HTTP 403
+  at the root. Insurer and partner connectivity into SCTP is arranged commercially, not
   through self-serve onboarding. The company's most notable standards signal is governance rather than
   implementation: founder, Managing Director and CEO Robert B. Kelly AM is Chair of the ACORD Board in
   New York, though no ACORD, AL3, ACORD XML or NGDS implementation detail is published anywhere on the
@@ -42,8 +49,87 @@ tags:
 created: '2026-07-25'
 modified: '2026-07-25'
 specificationVersion: '0.19'
-apis: []
+apis:
+- aid: steadfast-group:flood-risk-tracker
+  name: Steadfast Flood Risk Tracker API
+  description: >-
+    The public, anonymous, read-only JSON API behind Steadfast Group's consumer Flood Risk
+    Tracker tool. Two GET operations resolve a free-text Australian street address against the
+    national G-NAF address dataset and then return Swiss Re natural-catastrophe risk layers for
+    that address - river/fluvial flood and coastal storm surge - each with a hazard value,
+    intensity, risk index and risk band. This is the only publicly reachable API surface in the
+    entire Steadfast estate. Steadfast publishes no specification, no documentation and no
+    support commitment for it; the OpenAPI in this repository was derived by API Evangelist from
+    the tool's own client JavaScript and from live anonymous probes, and every field, status code
+    and example in it was observed in a real response.
+  humanURL: https://floodrisktracker.steadfast.com.au/
+  baseURL: https://floodrisktracker.steadfast.com.au
+  tags:
+  - Flood Risk
+  - Natural Catastrophe
+  - Address
+  - Geospatial
+  - Insurance
+  - Australia
+  properties:
+  - type: OpenAPI
+    url: openapi/steadfast-group-flood-risk-tracker-openapi.yml
+    name: Flood Risk Tracker OpenAPI 3.1 (derived from observed traffic)
+  - type: Overlay
+    url: overlays/steadfast-group-flood-risk-tracker-overlay.yaml
+  - type: Examples
+    url: examples/steadfast-group-flood-risk-tracker-examples.yml
+    name: Verbatim live request and response pairs
+  - type: ErrorCatalog
+    url: errors/steadfast-group-problem-types.yml
+  - type: DataModel
+    url: data-model/steadfast-group-data-model.yml
+  - type: Conventions
+    url: conventions/steadfast-group-conventions.yml
+  - type: MCPServer
+    url: mcp/steadfast-group-mcp.yml
+    name: Candidate MCP tools derived from the OpenAPI (no Steadfast MCP server exists)
+  - type: ToolCrosswalk
+    url: mcp/steadfast-group-tool-crosswalk.yml
+  - type: AgentSkill
+    url: skills/steadfast-group-flood-risk-lookup.md
+  - type: Authentication
+    url: authentication/steadfast-group-authentication.yml
+    name: No authentication required or accepted
+- aid: steadfast-group:identity
+  name: Steadfast Identity (OpenID Connect)
+  description: >-
+    Steadfast Group's Okta-hosted OpenID Connect provider, issuer https://idp.steadfast.com.au.
+    It fronts the credentialed broker portal used by the Steadfast Network's 414 brokerages and,
+    by inference from the shared estate, internal and partner applications. The discovery
+    document is anonymously readable and advertises authorization, token, userinfo, JWKS,
+    introspection, revocation, device-authorization, dynamic-client-registration and logout
+    endpoints, with PKCE S256 and DPoP proof-of-possession supported. Client credentials are not
+    self-serve - anonymous dynamic client registration returns 403 - so this is a discoverable
+    but commercially gated surface, listed because its contract is genuinely machine-readable.
+  humanURL: https://broker.steadfast.com.au/
+  baseURL: https://idp.steadfast.com.au
+  tags:
+  - Identity
+  - OpenID Connect
+  - OAuth 2.0
+  - Single Sign-On
+  - Partner Gated
+  properties:
+  - type: OpenIDConnect
+    url: well-known/steadfast-group-openid-configuration.json
+    name: OpenID Connect discovery document (harvested verbatim)
+  - type: WellKnown
+    url: well-known/steadfast-group-well-known.yml
+  - type: OAuthScopes
+    url: scopes/steadfast-group-scopes.yml
+  - type: Authentication
+    url: authentication/steadfast-group-authentication.yml
 common:
+- type: AgenticAccess
+  url: agentic-access/steadfast-group-agentic-access.yml
+- type: DomainSecurity
+  url: security/steadfast-group-domain-security.yml
 - type: Website
   url: https://www.steadfast.com.au/
 - type: About
@@ -81,7 +167,45 @@ common:
   name: Steadfast Singapore
 - type: Tool
   url: https://floodrisktracker.steadfast.com.au/
-  name: Steadfast Flood Risk Tracker - public web tool, no published API (renders via Google Maps JS)
+  name: Steadfast Flood Risk Tracker - public web tool; its undocumented JSON API is captured in openapi/
+- type: Support
+  url: https://www.steadfast.com.au/contact-us/
+  name: Contact Steadfast - the only support channel; there is no developer support surface
+- type: TermsOfService
+  url: https://www.steadfast.com.au/legal/
+  name: Website legal terms and disclaimer (Steadfast Group Limited ABN 98 073 659 677)
+- type: Careers
+  url: https://www.steadfast.com.au/about-us/careers/
+- type: FindABroker
+  url: https://www.steadfast.com.au/find-an-insurance-broker
+  name: Find an insurance broker in the Steadfast Network
+- type: WellKnown
+  url: well-known/steadfast-group-well-known.yml
+  name: Every /.well-known/ probe across the Steadfast estate, with HTTP status
+- type: OpenIDConnect
+  url: well-known/steadfast-group-openid-configuration.json
+  name: OpenID Connect discovery document for idp.steadfast.com.au (harvested verbatim)
+- type: Authentication
+  url: authentication/steadfast-group-authentication.yml
+- type: OAuthScopes
+  url: scopes/steadfast-group-scopes.yml
+- type: Conventions
+  url: conventions/steadfast-group-conventions.yml
+- type: Conformance
+  url: conformance/steadfast-group-conformance.yml
+- type: Lifecycle
+  url: lifecycle/steadfast-group-lifecycle.yml
+- type: ErrorCatalog
+  url: errors/steadfast-group-problem-types.yml
+- type: DataModel
+  url: data-model/steadfast-group-data-model.yml
+- type: Packages
+  url: packages/steadfast-group-packages.yml
+  name: No first-party client libraries exist - registries searched, homonym traps recorded
+- type: LLMsTxt
+  url: llms/steadfast-group-llms.txt
+- type: AgentSkill
+  url: skills/_index.yml
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com

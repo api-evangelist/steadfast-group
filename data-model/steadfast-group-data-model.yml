@@ -1,0 +1,93 @@
+generated: '2026-07-25'
+method: derived
+source: openapi/steadfast-group-flood-risk-tracker-openapi.yml
+note: >-
+  A two-entity model derived from the only public Steadfast API. There is no object reference to
+  search - the provider publishes none - so entity semantics come from observed payloads and
+  from the tool's own client JavaScript.
+entities:
+  - name: AddressCandidate
+    schema: openapi/steadfast-group-flood-risk-tracker-openapi.yml#/components/schemas/AddressCandidate
+    description: An Australian street address resolved from free text against the national address dataset.
+    identifier:
+      field: id
+      format: AU|GNAF|<G-NAF PID>
+      minted_by: external
+      namespace: Geocoded National Address File (G-NAF), Geoscape Australia
+      note: >-
+        Steadfast does not mint address identity - it borrows the Australian national address
+        identifier, so the key is stable and joinable against any other G-NAF-keyed dataset.
+    fields:
+      - {name: id, type: string, role: primary_key}
+      - {name: fullAddress, type: string, role: label}
+      - {name: latitude, type: number|null, role: geo, note: null on every observed response}
+      - {name: longitude, type: number|null, role: geo, note: null on every observed response}
+    produced_by:
+      - openapi/steadfast-group-flood-risk-tracker-openapi.yml#findAddress
+  - name: RiskLayer
+    schema: openapi/steadfast-group-flood-risk-tracker-openapi.yml#/components/schemas/RiskLayer
+    description: >-
+      One natural-catastrophe hazard layer scored for an address. Two layers are returned per
+      address - fluvial (river) flood and coastal storm surge - both sourced from Swiss Re
+      hazard models.
+    identifier:
+      field: layerId
+      format: enum-like string
+      observed_values:
+        - FL_Fluvial_SwissRe
+        - FL_Surge_SwissRe
+    fields:
+      - {name: layerId, type: string, role: discriminator}
+      - {name: valueLabel, type: string, role: measure_label}
+      - {name: intensity, type: string, role: measure, note: numeric value delivered as a string}
+      - {name: riskIndex, type: integer, role: band, note: drives the risk-<n> CSS class in the tool}
+      - {name: riskDescription, type: string, role: band_label, observed_values: [Low, High]}
+      - {name: details, type: string, role: nested_document, note: JSON double-encoded as a string, must be parsed again}
+      - {name: version, type: string, role: data_version, observed_values: ['/v1/']}
+    produced_by:
+      - openapi/steadfast-group-flood-risk-tracker-openapi.yml#getFloodRisk
+  - name: RiskDetail
+    description: >-
+      The model attributes embedded inside RiskLayer.details as a double-encoded JSON string.
+      Not a first-class API object - it has no endpoint and no schema in the response - but it
+      carries the substantive hazard data.
+    virtual: true
+    parent: RiskLayer
+    observed_keys_by_layer:
+      FL_Fluvial_SwissRe:
+        - FF Return Period (SR)
+        - FF Protection (SR)
+        - FF Schema (SR)
+        - FF Code (SR)
+        - FF Frequency (SR)
+      FL_Surge_SwissRe:
+        - Surge Return Period
+relationships:
+  - from: AddressCandidate
+    to: RiskLayer
+    type: has_many
+    via: id
+    detail: >-
+      AddressCandidate.id is passed as the addressId query parameter to getFloodRisk, which
+      returns the risk layers for that address. The join is by value across two calls - there is
+      no embedded link, no href and no expansion.
+    cardinality: 1..n (two layers observed on every successful call)
+  - from: RiskLayer
+    to: RiskDetail
+    type: has_one
+    via: details
+    detail: Embedded as a JSON string that must be parsed a second time.
+    cardinality: '1'
+external_dependencies:
+  - name: G-NAF (Geocoded National Address File)
+    role: Address identity namespace for AddressCandidate.id
+    operator: Geoscape Australia
+  - name: Swiss Re natural catastrophe hazard models
+    role: Source of the fluvial flood and storm surge risk layers, per the _SwissRe layerId suffix
+  - name: Google Maps Places API
+    role: Client-side address autocomplete and geocoding in the web tool, alongside the Steadfast findAddress call
+gaps:
+  - >-
+    No entity for quote, policy, claim, broker, insurer or premium is publicly exposed anywhere
+    in the Steadfast estate. Those objects live inside SCTP, INSIGHT and Steadfast Apps behind
+    the broker login, and their model is not observable.

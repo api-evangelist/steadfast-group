@@ -1,0 +1,14 @@
+generated: '2026-07-25'
+method: generated
+note: >-
+  Steadfast Group publishes no agent skills, no AGENTS.md and no llms.txt. This skill was
+  generated from the derived OpenAPI of the one public Steadfast API; every operationId it
+  references exists verbatim in that specification.
+skills:
+  - file: steadfast-group-flood-risk-lookup.md
+    name: Look up flood and storm-surge risk for an Australian address
+    api: openapi/steadfast-group-flood-risk-tracker-openapi.yml
+    operations:
+      - findAddress
+      - getFloodRisk
+    auth: none

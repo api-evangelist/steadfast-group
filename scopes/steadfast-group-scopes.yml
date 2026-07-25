@@ -1,0 +1,105 @@
+generated: '2026-07-25'
+method: searched
+source: https://idp.steadfast.com.au/.well-known/openid-configuration
+docs: null
+note: >-
+  Scopes are read from the anonymously-published OpenID Connect discovery document of Steadfast
+  Group's Okta identity provider. Steadfast publishes no scopes or permissions reference page -
+  this is the complete advertised scope set for the tenant's default authorization server, not a
+  documented API permission model. The public Flood Risk Tracker API uses no OAuth and therefore
+  has no scopes.
+schemes:
+  - name: SteadfastIdP
+    type: openIdConnect
+    issuer: https://idp.steadfast.com.au
+    source: well-known/steadfast-group-openid-configuration.json
+    flows:
+      - flow: authorizationCode
+        authorizationUrl: https://idp.steadfast.com.au/oauth2/v1/authorize
+        tokenUrl: https://idp.steadfast.com.au/oauth2/v1/token
+      - flow: implicit
+        authorizationUrl: https://idp.steadfast.com.au/oauth2/v1/authorize
+      - flow: deviceCode
+        deviceAuthorizationUrl: https://idp.steadfast.com.au/oauth2/v1/device/authorize
+        tokenUrl: https://idp.steadfast.com.au/oauth2/v1/token
+      - flow: password
+        tokenUrl: https://idp.steadfast.com.au/oauth2/v1/token
+scopes:
+  - scope: openid
+    description: Required to obtain an ID token; identifies the request as an OpenID Connect request.
+    standard: OpenID Connect Core 1.0
+    flows: [authorizationCode, implicit, deviceCode, password]
+    sources: [well-known/steadfast-group-openid-configuration.json]
+  - scope: profile
+    description: >-
+      Access to the end user's default profile claims - name, family_name, given_name,
+      middle_name, nickname, preferred_username, picture, website, gender, birthdate, zoneinfo,
+      locale, updated_at.
+    standard: OpenID Connect Core 1.0
+    flows: [authorizationCode, implicit, deviceCode, password]
+    sources: [well-known/steadfast-group-openid-configuration.json]
+  - scope: email
+    description: Access to the end user's email and email_verified claims.
+    standard: OpenID Connect Core 1.0
+    flows: [authorizationCode, implicit, deviceCode, password]
+    sources: [well-known/steadfast-group-openid-configuration.json]
+  - scope: address
+    description: Access to the end user's address claim.
+    standard: OpenID Connect Core 1.0
+    flows: [authorizationCode, implicit, deviceCode, password]
+    sources: [well-known/steadfast-group-openid-configuration.json]
+  - scope: phone
+    description: Access to the end user's phone_number and phone_number_verified claims.
+    standard: OpenID Connect Core 1.0
+    flows: [authorizationCode, implicit, deviceCode, password]
+    sources: [well-known/steadfast-group-openid-configuration.json]
+  - scope: offline_access
+    description: Requests a refresh token so the client can obtain new access tokens without user interaction.
+    standard: OpenID Connect Core 1.0
+    flows: [authorizationCode, deviceCode, password]
+    sources: [well-known/steadfast-group-openid-configuration.json]
+  - scope: groups
+    description: >-
+      Okta-specific scope returning the end user's group memberships as a claim. In a broker
+      network this is the likely carrier of brokerage/role entitlement, though no documentation
+      confirms how Steadfast populates it.
+    standard: Okta extension
+    flows: [authorizationCode, implicit, deviceCode, password]
+    sources: [well-known/steadfast-group-openid-configuration.json]
+claims_supported:
+  - iss
+  - ver
+  - sub
+  - aud
+  - iat
+  - exp
+  - jti
+  - auth_time
+  - amr
+  - idp
+  - nonce
+  - name
+  - nickname
+  - preferred_username
+  - given_name
+  - middle_name
+  - family_name
+  - email
+  - email_verified
+  - profile
+  - zoneinfo
+  - locale
+  - address
+  - phone_number
+  - picture
+  - website
+  - gender
+  - birthdate
+  - updated_at
+  - at_hash
+  - c_hash
+gaps:
+  - >-
+    No business/domain scopes (quote, bind, policy, claim) are advertised on the default
+    authorization server. Any partner-facing API scopes would live on a custom Okta
+    authorization server whose discovery path is not publicly enumerable.

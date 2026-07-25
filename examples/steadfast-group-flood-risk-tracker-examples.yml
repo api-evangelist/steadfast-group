@@ -1,0 +1,151 @@
+generated: '2026-07-25'
+method: searched
+source: live anonymous calls to https://floodrisktracker.steadfast.com.au on 2026-07-25
+api: openapi/steadfast-group-flood-risk-tracker-openapi.yml
+note: >-
+  Verbatim request/response pairs captured from the live public API. Every response body below
+  was returned by the provider - none is synthesised. No credential is required to reproduce
+  these calls.
+examples:
+  - name: Search an Australian address
+    operation: findAddress
+    request:
+      method: GET
+      url: https://floodrisktracker.steadfast.com.au/api/risk/find_address?searchText=1%20Market%20Street
+      headers:
+        Accept: application/json
+    response:
+      status: 200
+      content_type: application/json; charset=utf-8
+      headers:
+        api-supported-versions: '1.0'
+        access-control-allow-origin: https://steadfastinsurance.wufoo.com
+        strict-transport-security: max-age=2592000
+      body:
+        - id: AU|GNAF|GASA_422065999
+          fullAddress: 1 MARKET STREET, BURRA SA 5417
+          latitude: null
+          longitude: null
+        - id: AU|GNAF|GASA_415313051
+          fullAddress: 1 MARKET STREET, MARION SA 5043
+          latitude: null
+          longitude: null
+        - id: AU|GNAF|GAVIC420688341
+          fullAddress: 1 MARKET STREET, MINYIP VIC 3392
+          latitude: null
+          longitude: null
+        - id: AU|GNAF|GAVIC421490832
+          fullAddress: 1 MARKET STREET, MOE VIC 3825
+          latitude: null
+          longitude: null
+        - id: AU|GNAF|GAVIC423795616
+          fullAddress: 1 MARKET STREET, NEWPORT VIC 3015
+          latitude: null
+          longitude: null
+  - name: Search an address outside Australia
+    operation: findAddress
+    request:
+      method: GET
+      url: https://floodrisktracker.steadfast.com.au/api/risk/find_address?searchText=1%20Queen%20Street%20Auckland
+    response:
+      status: 200
+      content_type: application/json; charset=utf-8
+      body: []
+      note: Coverage is Australia-only. No match is signalled as 200 with an empty array, not 404.
+  - name: Flood risk for a high-risk address
+    operation: getFloodRisk
+    request:
+      method: GET
+      url: https://floodrisktracker.steadfast.com.au/api/risk/get_flood_risk?addressId=AU%7CGNAF%7CGANSW705226154
+      note: 1 MOLESWORTH STREET, LISMORE NSW 2480 - Lismore flooded catastrophically in 2022.
+    response:
+      status: 200
+      content_type: application/json; charset=utf-8
+      body:
+        - layerId: FL_Surge_SwissRe
+          valueLabel: Outside
+          intensity: '1'
+          riskIndex: 1
+          details: "{\r\n  \"Surge Return Period\": \"Outside\"\r\n}"
+          riskDescription: Low
+          version: /v1/
+        - layerId: FL_Fluvial_SwissRe
+          valueLabel: 50 years
+          intensity: '8.9'
+          riskIndex: 7
+          details: "{\r\n  \"FF Return Period (SR)\": \"50 years\",\r\n  \"FF Protection (SR)\": \"Unprotected\",\r\n  \"FF Schema (SR)\": \"SR_GFZ3\",\r\n  \"FF Code (SR)\": \"SR_GFZ3_50\",\r\n  \"FF Frequency (SR)\": \"Very High\"\r\n}"
+          riskDescription: High
+          version: /v1/
+  - name: Flood risk for a low-risk address
+    operation: getFloodRisk
+    request:
+      method: GET
+      url: https://floodrisktracker.steadfast.com.au/api/risk/get_flood_risk?addressId=AU%7CGNAF%7CGAVIC423795616
+      note: 1 MARKET STREET, NEWPORT VIC 3015
+    response:
+      status: 200
+      content_type: application/json; charset=utf-8
+      body:
+        - layerId: FL_Surge_SwissRe
+          valueLabel: Outside
+          intensity: '1'
+          riskIndex: 1
+          details: "{\r\n  \"Surge Return Period\": \"Outside\"\r\n}"
+          riskDescription: Low
+          version: /v1/
+        - layerId: FL_Fluvial_SwissRe
+          valueLabel: Outside
+          intensity: '1'
+          riskIndex: 1
+          details: "{\r\n  \"FF Return Period (SR)\": \"Outside\",\r\n  \"FF Protection (SR)\": \"Unprotected\",\r\n  \"FF Schema (SR)\": \"SR_GFZ3\",\r\n  \"FF Code (SR)\": \"Outside\",\r\n  \"FF Frequency (SR)\": \"Outside\"\r\n}"
+          riskDescription: Low
+          version: /v1/
+  - name: Unknown address identifier
+    operation: getFloodRisk
+    request:
+      method: GET
+      url: https://floodrisktracker.steadfast.com.au/api/risk/get_flood_risk?addressId=BOGUS
+    response:
+      status: 200
+      content_type: application/json; charset=utf-8
+      body: []
+  - name: Missing required parameter
+    operation: getFloodRisk
+    request:
+      method: GET
+      url: https://floodrisktracker.steadfast.com.au/api/risk/get_flood_risk
+    response:
+      status: 400
+      content_type: application/problem+json; charset=utf-8
+      body:
+        type: https://tools.ietf.org/html/rfc9110#section-15.5.1
+        title: One or more validation errors occurred.
+        status: 400
+        errors:
+          addressId:
+            - The addressId field is required.
+        traceId: 00-ce51a3cb1302ff41a4b7b151de452c73-495f67f482a4fb3a-00
+  - name: Missing required parameter on address search
+    operation: findAddress
+    request:
+      method: GET
+      url: https://floodrisktracker.steadfast.com.au/api/risk/find_address
+    response:
+      status: 400
+      content_type: application/problem+json; charset=utf-8
+      body:
+        type: https://tools.ietf.org/html/rfc9110#section-15.5.1
+        title: One or more validation errors occurred.
+        status: 400
+        errors:
+          searchText:
+            - The searchText field is required.
+        traceId: 00-615e88be363e8197c2e45ba009b64706-88ea2d1f998e39bd-00
+  - name: Unsupported method
+    operation: findAddress
+    request:
+      method: POST
+      url: https://floodrisktracker.steadfast.com.au/api/risk/find_address
+    response:
+      status: 404
+      note: Unsupported methods return 404 rather than 405. OPTIONS behaves identically.

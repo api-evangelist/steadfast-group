@@ -1,0 +1,313 @@
+openapi: 3.1.0
+info:
+  title: Steadfast Flood Risk Tracker API
+  version: '1.0'
+  summary: Anonymous Australian address lookup and Swiss Re natural-catastrophe flood risk scoring.
+  description: >-
+    The read-only JSON API behind Steadfast Group's public Flood Risk Tracker web tool
+    (https://floodrisktracker.steadfast.com.au/). It resolves a free-text Australian street
+    address against the G-NAF (Geocoded National Address File) identifier set, then returns
+    natural-catastrophe flood risk layers for that address, sourced from Swiss Re hazard
+    models (river/fluvial flood and coastal storm surge).
+
+
+    PROVENANCE AND STATUS - this document is NOT published by Steadfast Group. Steadfast
+    Group publishes no developer portal and no API specification of any kind. This OpenAPI
+    was DERIVED by API Evangelist from the tool's own client JavaScript
+    (/Scripts/FloodRiskTracker/custom.js, which calls both operations via jQuery $.ajax)
+    and from live, anonymous, unauthenticated probes of the two endpoints on 2026-07-25.
+    Every path, parameter name, field name, status code, media type and example in this
+    document was OBSERVED in a real response - nothing is invented. It is nonetheless an
+    undocumented, unsupported, unversioned-in-public surface that Steadfast may change or
+    close without notice, and it should be treated as observational intelligence rather
+    than as a contract Steadfast offers.
+
+
+    OBSERVED RUNTIME NOTES - the API is fronted by Cloudflare and served by ASP.NET Core
+    (`x-powered-by: ASP.NET`). Responses carry `api-supported-versions: 1.0`, and each risk
+    layer object carries its own `version` field (observed value `/v1/`). Validation errors
+    are returned as RFC 9457 `application/problem+json` (ASP.NET Core ValidationProblemDetails)
+    with a W3C Trace Context `traceId`. CORS is restricted - the observed
+    `access-control-allow-origin` is `https://steadfastinsurance.wufoo.com`, so browser-based
+    cross-origin use from other origins is not permitted. No authentication of any kind is
+    required or accepted; no rate limits are documented.
+  contact:
+    name: Steadfast Group Limited
+    url: https://www.steadfast.com.au/contact-us/
+  x-apievangelist-provenance:
+    method: derived
+    derived_from:
+      - https://floodrisktracker.steadfast.com.au/Scripts/FloodRiskTracker/custom.js
+      - live anonymous probes of both operations on 2026-07-25
+    published_by_provider: false
+    supported_contract: false
+servers:
+  - url: https://floodrisktracker.steadfast.com.au
+    description: Production host for the public Flood Risk Tracker web tool and its JSON API.
+tags:
+  - name: Address
+    description: Australian address resolution against G-NAF identifiers.
+  - name: Risk
+    description: Natural-catastrophe flood risk layers for a resolved address.
+paths:
+  /api/risk/find_address:
+    get:
+      operationId: findAddress
+      tags:
+        - Address
+      summary: Search Australian addresses
+      description: >-
+        Resolves a free-text address fragment to a list of candidate Australian addresses,
+        each carrying the G-NAF identifier required by `getFloodRisk`. Observed to return an
+        empty array for addresses outside Australia (a New Zealand query returned `[]`), and
+        to return more candidates than the tool's UI displays - the client slices the first
+        five. Observed `latitude` and `longitude` were `null` on every candidate returned.
+      parameters:
+        - name: searchText
+          in: query
+          required: true
+          description: Free-text Australian address fragment, e.g. `1 Market Street`.
+          schema:
+            type: string
+            minLength: 1
+          example: 1 Market Street
+      responses:
+        '200':
+          description: Candidate addresses. An empty array means no match was found.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AddressCandidate'
+              examples:
+                observed:
+                  summary: Observed response for `searchText=1 Market Street` (truncated to two of five)
+                  value:
+                    - id: AU|GNAF|GASA_422065999
+                      fullAddress: 1 MARKET STREET, BURRA SA 5417
+                      latitude: null
+                      longitude: null
+                    - id: AU|GNAF|GAVIC423795616
+                      fullAddress: 1 MARKET STREET, NEWPORT VIC 3015
+                      latitude: null
+                      longitude: null
+                noMatch:
+                  summary: Observed response for a non-Australian address
+                  value: []
+        '400':
+          $ref: '#/components/responses/ValidationProblem'
+  /api/risk/get_flood_risk:
+    get:
+      operationId: getFloodRisk
+      tags:
+        - Risk
+      summary: Get flood risk layers for an address
+      description: >-
+        Returns the natural-catastrophe flood risk layers for a G-NAF address identifier
+        obtained from `findAddress`. Two layers were observed on every successful call:
+        `FL_Fluvial_SwissRe` (river/fluvial flood) and `FL_Surge_SwissRe` (coastal storm
+        surge). An unknown or malformed identifier was observed to return `200` with an empty
+        array rather than a 404.
+      parameters:
+        - name: addressId
+          in: query
+          required: true
+          description: >-
+            G-NAF address identifier returned in `AddressCandidate.id`, e.g.
+            `AU|GNAF|GANSW705226154`.
+          schema:
+            type: string
+          example: AU|GNAF|GANSW705226154
+      responses:
+        '200':
+          description: >-
+            Risk layers for the address. An empty array means no risk data was resolved for
+            the supplied identifier.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RiskLayer'
+              examples:
+                highFluvialRisk:
+                  summary: Observed response for 1 MOLESWORTH STREET, LISMORE NSW 2480
+                  value:
+                    - layerId: FL_Surge_SwissRe
+                      valueLabel: Outside
+                      intensity: '1'
+                      riskIndex: 1
+                      details: "{\r\n  \"Surge Return Period\": \"Outside\"\r\n}"
+                      riskDescription: Low
+                      version: /v1/
+                    - layerId: FL_Fluvial_SwissRe
+                      valueLabel: 50 years
+                      intensity: '8.9'
+                      riskIndex: 7
+                      details: "{\r\n  \"FF Return Period (SR)\": \"50 years\",\r\n  \"FF Protection (SR)\": \"Unprotected\",\r\n  \"FF Schema (SR)\": \"SR_GFZ3\",\r\n  \"FF Code (SR)\": \"SR_GFZ3_50\",\r\n  \"FF Frequency (SR)\": \"Very High\"\r\n}"
+                      riskDescription: High
+                      version: /v1/
+                lowRisk:
+                  summary: Observed response for 1 MARKET STREET, NEWPORT VIC 3015
+                  value:
+                    - layerId: FL_Surge_SwissRe
+                      valueLabel: Outside
+                      intensity: '1'
+                      riskIndex: 1
+                      details: "{\r\n  \"Surge Return Period\": \"Outside\"\r\n}"
+                      riskDescription: Low
+                      version: /v1/
+                    - layerId: FL_Fluvial_SwissRe
+                      valueLabel: Outside
+                      intensity: '1'
+                      riskIndex: 1
+                      details: "{\r\n  \"FF Return Period (SR)\": \"Outside\",\r\n  \"FF Protection (SR)\": \"Unprotected\",\r\n  \"FF Schema (SR)\": \"SR_GFZ3\",\r\n  \"FF Code (SR)\": \"Outside\",\r\n  \"FF Frequency (SR)\": \"Outside\"\r\n}"
+                      riskDescription: Low
+                      version: /v1/
+                noData:
+                  summary: Observed response for an unrecognised identifier
+                  value: []
+        '400':
+          $ref: '#/components/responses/ValidationProblem'
+components:
+  responses:
+    ValidationProblem:
+      description: >-
+        The required query parameter was missing. Returned as RFC 9457 problem details
+        (ASP.NET Core `ValidationProblemDetails`).
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/ValidationProblemDetails'
+          examples:
+            observed:
+              summary: Observed response when `addressId` is omitted
+              value:
+                type: https://tools.ietf.org/html/rfc9110#section-15.5.1
+                title: One or more validation errors occurred.
+                status: 400
+                errors:
+                  addressId:
+                    - The addressId field is required.
+                traceId: 00-ce51a3cb1302ff41a4b7b151de452c73-495f67f482a4fb3a-00
+  schemas:
+    AddressCandidate:
+      type: object
+      title: AddressCandidate
+      description: A candidate Australian address resolved from free text.
+      properties:
+        id:
+          type: string
+          description: >-
+            Pipe-delimited address identifier. Observed form `AU|GNAF|<G-NAF PID>` -
+            country code, address dataset (G-NAF, the Geocoded National Address File),
+            and the persistent identifier. This value is the `addressId` input to
+            `getFloodRisk`.
+          examples:
+            - AU|GNAF|GANSW705226154
+        fullAddress:
+          type: string
+          description: Upper-case formatted address including state and postcode.
+          examples:
+            - 1 MOLESWORTH STREET, LISMORE NSW 2480
+        latitude:
+          type:
+            - number
+            - 'null'
+          description: Observed `null` on every candidate returned; the tool geocodes client-side via Google Maps instead.
+        longitude:
+          type:
+            - number
+            - 'null'
+          description: Observed `null` on every candidate returned.
+      required:
+        - id
+        - fullAddress
+    RiskLayer:
+      type: object
+      title: RiskLayer
+      description: One natural-catastrophe hazard layer scored for an address.
+      properties:
+        layerId:
+          type: string
+          description: >-
+            Hazard layer identifier. Observed values are `FL_Fluvial_SwissRe` (river flood)
+            and `FL_Surge_SwissRe` (coastal storm surge); the `_SwissRe` suffix identifies
+            Swiss Re as the hazard data source.
+          examples:
+            - FL_Fluvial_SwissRe
+            - FL_Surge_SwissRe
+        valueLabel:
+          type: string
+          description: >-
+            Human-readable hazard value. Observed values include `Outside` (outside the
+            modelled hazard zone) and return-period labels such as `50 years`.
+          examples:
+            - Outside
+            - 50 years
+        intensity:
+          type: string
+          description: Hazard intensity as a decimal string. Observed `1` through `8.9`.
+          examples:
+            - '1'
+            - '8.9'
+        riskIndex:
+          type: integer
+          description: >-
+            Numeric risk band the tool maps to a CSS class (`risk-<n>`). Observed values 1
+            and 7; the tool renders a graduated bar from this value.
+          examples:
+            - 1
+            - 7
+        riskDescription:
+          type: string
+          description: >-
+            Risk band label the tool renders as "<value> Risk". Observed values `Low` and
+            `High`. When absent/empty the tool renders "No Risk Data".
+          examples:
+            - Low
+            - High
+        details:
+          type: string
+          description: >-
+            A JSON document embedded as a string (double-encoded, CRLF-formatted) carrying
+            the underlying Swiss Re model attributes for the layer - e.g. `FF Return Period
+            (SR)`, `FF Protection (SR)`, `FF Schema (SR)`, `FF Code (SR)`, `FF Frequency (SR)`
+            for fluvial flood, and `Surge Return Period` for storm surge. Consumers must
+            parse this string as JSON.
+          contentMediaType: application/json
+        version:
+          type: string
+          description: Layer data version. Observed `/v1/` on every layer.
+          examples:
+            - /v1/
+      required:
+        - layerId
+    ValidationProblemDetails:
+      type: object
+      title: ValidationProblemDetails
+      description: RFC 9457 problem details as emitted by ASP.NET Core model validation.
+      properties:
+        type:
+          type: string
+          format: uri
+          description: Problem type URI. Observed as an RFC 9110 status-code section link.
+        title:
+          type: string
+        status:
+          type: integer
+        errors:
+          type: object
+          description: Map of parameter name to an array of validation messages.
+          additionalProperties:
+            type: array
+            items:
+              type: string
+        traceId:
+          type: string
+          description: W3C Trace Context `traceparent` value for the failed request.
+      required:
+        - type
+        - title
+        - status

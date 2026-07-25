@@ -1,0 +1,124 @@
+generated: '2026-07-25'
+method: searched
+source: https://idp.steadfast.com.au/.well-known/openid-configuration
+docs: null
+summary:
+  types:
+    - none
+    - openIdConnect
+    - oauth2
+  api_key_in: []
+  oauth2_flows:
+    - authorizationCode
+    - implicit
+    - refresh_token
+    - password
+    - device_code
+    - ciba
+  note: >-
+    Steadfast Group operates two very different authentication postures. The one genuinely
+    public API - the Flood Risk Tracker - requires and accepts NO authentication at all. Every
+    other surface (the broker portal, the partner API host, internal applications) sits behind
+    an Okta-hosted OpenID Connect provider at idp.steadfast.com.au whose discovery document is
+    anonymously readable, but whose client credentials are issued commercially rather than
+    through self-serve signup. There is no published developer authentication guide anywhere on
+    the Steadfast estate - this profile was assembled from live discovery documents and probes,
+    not from documentation.
+schemes:
+  - name: none
+    type: none
+    description: >-
+      The Flood Risk Tracker API accepts anonymous requests. No API key, bearer token, cookie or
+      signed header was required for any observed call; sending none returned 200. Access is
+      instead shaped by a restrictive CORS policy - the observed access-control-allow-origin is
+      https://steadfastinsurance.wufoo.com - plus Cloudflare fronting and reCAPTCHA Enterprise
+      on the human web form (the reCAPTCHA gate is enforced client-side in the tool's own
+      JavaScript, not by the API).
+    applies_to:
+      - openapi/steadfast-group-flood-risk-tracker-openapi.yml
+    sources:
+      - live anonymous probes 2026-07-25
+  - name: SteadfastIdP
+    type: openIdConnect
+    openIdConnectUrl: https://idp.steadfast.com.au/.well-known/openid-configuration
+    description: >-
+      Okta-hosted OpenID Connect provider (issuer https://idp.steadfast.com.au). Serves the
+      credentialed broker portal at broker.steadfast.com.au and, by inference from the shared
+      estate, internal and partner applications. Discovery is public; client registration is not
+      self-serve in practice - the dynamic client registration endpoint exists but returned 403
+      "Invalid session" to an anonymous request.
+    endpoints:
+      issuer: https://idp.steadfast.com.au
+      authorization: https://idp.steadfast.com.au/oauth2/v1/authorize
+      token: https://idp.steadfast.com.au/oauth2/v1/token
+      userinfo: https://idp.steadfast.com.au/oauth2/v1/userinfo
+      jwks: https://idp.steadfast.com.au/oauth2/v1/keys
+      introspection: https://idp.steadfast.com.au/oauth2/v1/introspect
+      revocation: https://idp.steadfast.com.au/oauth2/v1/revoke
+      end_session: https://idp.steadfast.com.au/oauth2/v1/logout
+      device_authorization: https://idp.steadfast.com.au/oauth2/v1/device/authorize
+      registration: https://idp.steadfast.com.au/oauth2/v1/clients
+    grant_types_supported:
+      - authorization_code
+      - implicit
+      - refresh_token
+      - password
+      - urn:ietf:params:oauth:grant-type:device_code
+      - urn:openid:params:grant-type:ciba
+      - urn:okta:params:oauth:grant-type:otp
+      - urn:okta:params:oauth:grant-type:oob
+    response_types_supported:
+      - code
+      - id_token
+      - code id_token
+      - code token
+      - id_token token
+      - code id_token token
+    token_endpoint_auth_methods_supported:
+      - client_secret_basic
+      - client_secret_post
+      - client_secret_jwt
+      - private_key_jwt
+      - none
+    pkce:
+      supported: true
+      code_challenge_methods:
+        - S256
+    dpop:
+      supported: true
+      signing_algs:
+        - RS256
+        - RS384
+        - RS512
+        - ES256
+        - ES384
+        - ES512
+    id_token_signing_alg_values_supported:
+      - RS256
+    subject_types_supported:
+      - public
+    request_parameter_supported: true
+    scopes: scopes/steadfast-group-scopes.yml
+    sources:
+      - well-known/steadfast-group-openid-configuration.json
+      - well-known/steadfast-group-oauth-authorization-server.json
+observations:
+  - >-
+    PKCE with S256 and DPoP proof-of-possession are both advertised - a modern posture for a
+    broker-network identity provider, and stronger than the estate's published documentation
+    (of which there is none) would suggest.
+  - >-
+    The Resource Owner Password Credentials grant (`password`) and the `implicit` response types
+    remain enabled. Both are discouraged by OAuth 2.1 and BCP 212; their presence is recorded as
+    observed configuration, not as a recommendation.
+  - >-
+    `token_endpoint_auth_methods_supported` includes `none`, meaning public clients (SPA/mobile)
+    are provisioned on this tenant alongside confidential clients using private_key_jwt.
+  - >-
+    No mutualTLS, no API-key scheme and no HTTP basic scheme is published anywhere on the
+    Steadfast estate.
+gaps:
+  - No developer-facing authentication documentation exists on any public Steadfast property.
+  - >-
+    api.steadfast.com.au - the partner API host - publishes no auth metadata; /.well-known/
+    returns 503 and the root returns 403, so its token model is not externally observable.

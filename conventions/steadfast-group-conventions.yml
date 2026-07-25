@@ -1,0 +1,112 @@
+generated: '2026-07-25'
+method: derived
+source: >-
+  openapi/steadfast-group-flood-risk-tracker-openapi.yml plus live response headers observed on
+  https://floodrisktracker.steadfast.com.au on 2026-07-25 and the OIDC discovery document at
+  https://idp.steadfast.com.au/.well-known/openid-configuration
+note: >-
+  Steadfast Group publishes no API style guide, no developer documentation and no conventions
+  reference. Everything below was derived from observed traffic and from the one machine-readable
+  document the estate does publish. Treat it as a description of observed behaviour, not as a
+  contract Steadfast has committed to.
+authentication:
+  style: none
+  detail: >-
+    The public Flood Risk Tracker API accepts anonymous GET requests with no credential of any
+    kind. Access control is perimeter-shaped: Cloudflare in front, a restrictive CORS
+    allow-origin, and reCAPTCHA Enterprise enforced by the web tool's own client JavaScript
+    before it calls getFloodRisk. Everything else in the estate is behind Okta OIDC.
+  see_also: authentication/steadfast-group-authentication.yml
+transport:
+  protocol: HTTPS only
+  http_version: HTTP/2 (h2), with HTTP/3 advertised via alt-svc
+  methods: GET only. POST and OPTIONS on a valid path return 404, not 405.
+  media_types:
+    request: none - all inputs are query-string parameters
+    response_success: application/json; charset=utf-8
+    response_error: application/problem+json; charset=utf-8
+  cors:
+    access_control_allow_origin: https://steadfastinsurance.wufoo.com
+    note: >-
+      Single-origin allow-list pinned to the Wufoo form host used by the consumer tool.
+      Browser-based cross-origin consumption from any other origin is blocked; server-side
+      consumption is unaffected.
+naming:
+  paths: snake_case verb-ish resource paths under a flat /api/risk/ prefix (find_address, get_flood_risk)
+  parameters: camelCase query parameters (searchText, addressId)
+  fields: camelCase JSON fields (fullAddress, layerId, riskIndex, riskDescription, valueLabel)
+  note: >-
+    Path naming is RPC-style rather than REST-resource style, and mixes snake_case paths with
+    camelCase parameters and fields - an internal-tool convention rather than a designed public
+    contract.
+identifiers:
+  format: Pipe-delimited composite - AU|GNAF|<G-NAF PID>
+  namespace: >-
+    Australian Geocoded National Address File (G-NAF). Address identity is borrowed from the
+    national address dataset rather than minted by Steadfast, which makes it stable and joinable
+    against other Australian address-keyed data.
+  example: AU|GNAF|GANSW705226154
+  note: The pipe characters require URL encoding when constructing requests.
+pagination:
+  supported: false
+  detail: >-
+    findAddress returns an unbounded array with no limit, offset, cursor or total-count
+    parameter. The web tool slices the first five candidates client-side. There is no
+    server-side way to page or cap results.
+filtering_and_expansion:
+  supported: false
+  detail: No field selection, sparse fieldsets, sorting, or expansion parameters are supported.
+idempotency:
+  idempotency_key_supported: false
+  detail: >-
+    No Idempotency-Key header or equivalent is accepted. It is not applicable here - the API
+    exposes only safe GET operations, which are idempotent by RFC 9110 definition, and there is
+    no state-changing operation to protect. Retrying either operation is safe.
+  applicability: not-applicable-read-only-surface
+request_tracing:
+  correlation_id: >-
+    A W3C Trace Context traceparent is returned as `traceId` in error bodies only. No request-id
+    response header is emitted on success, so successful calls cannot be correlated with server
+    logs by the client.
+  observed_headers:
+    - cf-ray - Cloudflare request identifier, present on every response
+versioning:
+  scheme: header-advertised, unversioned URI
+  detail: >-
+    Paths carry no version segment. Responses carry `api-supported-versions: 1.0` (the ASP.NET
+    API Versioning convention), and each risk layer object carries its own data `version` field,
+    observed as `/v1/`. No version negotiation parameter or media-type versioning was observed,
+    and no deprecation or sunset policy is published.
+  see_also: lifecycle/steadfast-group-lifecycle.yml
+errors:
+  envelope: RFC 9457 problem details (application/problem+json), ASP.NET Core ValidationProblemDetails
+  empty_result_signalling: >-
+    HTTP 200 with an empty array, never 404. Consumers must branch on array length rather than
+    status code.
+  see_also: errors/steadfast-group-problem-types.yml
+rate_limiting:
+  documented: false
+  headers_observed: none
+  detail: >-
+    No RateLimit, X-RateLimit or Retry-After headers were observed and no limits are published.
+    Cloudflare fronting means unadvertised bot/rate protection may apply at any time. Consumers
+    should throttle conservatively and treat the surface as unmetered but unguaranteed.
+data_quirks:
+  - >-
+    `RiskLayer.details` is a JSON document double-encoded as a string, with CRLF line breaks
+    inside it. Clients must JSON.parse the field a second time.
+  - >-
+    `intensity` is a numeric value delivered as a string (`"1"`, `"8.9"`), while the sibling
+    `riskIndex` is a real integer. Types are inconsistent across the same object.
+  - >-
+    `latitude` and `longitude` on address candidates were null on every observed response; the
+    tool geocodes client-side through Google Maps instead of using these fields.
+security_headers_observed:
+  strict_transport_security: max-age=2592000
+  x_content_type_options: nosniff
+  x_frame_options: sameorigin
+  x_xss_protection: 1; mode=block
+  x_powered_by: ASP.NET
+  note: >-
+    HSTS max-age is 30 days, below the 1-year value required for HSTS preload eligibility, and
+    no includeSubDomains or preload directive is present. `x-powered-by` leaks the server stack.

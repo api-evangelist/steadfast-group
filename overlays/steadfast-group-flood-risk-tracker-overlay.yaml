@@ -1,0 +1,76 @@
+overlay: 1.0.0
+info:
+  title: API Evangelist enhancements for the Steadfast Flood Risk Tracker API
+  version: 1.0.0
+extends: openapi/steadfast-group-flood-risk-tracker-openapi.yml
+x-apievangelist:
+  generated: '2026-07-25'
+  method: generated
+  note: >-
+    The base document in openapi/ was itself derived by API Evangelist from observed traffic,
+    because Steadfast Group publishes no specification. This overlay carries the catalog
+    annotations kept separate from the observed contract so the two never blur - provenance,
+    agent-access classification, and the caveats a consumer needs before depending on an
+    undocumented surface.
+actions:
+  - target: $.info
+    update:
+      x-apievangelist-provider: steadfast-group
+      x-apievangelist-provider-name: Steadfast Group
+      x-apievangelist-country: AU
+      x-apievangelist-industry: Insurance
+      x-apievangelist-source: derived-from-observed-traffic
+      x-apievangelist-provider-published-spec: false
+      x-apievangelist-supported: false
+      x-apievangelist-auth: none
+      x-apievangelist-consumer-warning: >-
+        Undocumented and unsupported. Steadfast Group has made no commitment to this interface,
+        publishes no deprecation policy and operates no status page. It may change or close
+        without notice. Verify current behaviour before building on it, and respect the
+        restrictive CORS policy and any Cloudflare bot protections.
+  - target: $.info
+    update:
+      x-apievangelist-data-sources:
+        - name: G-NAF (Geocoded National Address File)
+          operator: Geoscape Australia
+          role: address identity namespace
+        - name: Swiss Re natural catastrophe hazard models
+          role: fluvial flood and storm surge risk layers
+  - target: $.paths['/api/risk/find_address'].get
+    update:
+      x-agentic-access:
+        action-class: connected
+        consequence: read
+        token:
+          required: false
+          max-ttl-seconds: 3600
+        audit: optional
+        human-in-the-loop: not-required
+      x-apievangelist-notes: >-
+        Safe, anonymous, retryable. Returns an unbounded array with no server-side paging -
+        agents should cap client-side. Empty array means no match, not an error.
+  - target: $.paths['/api/risk/get_flood_risk'].get
+    update:
+      x-agentic-access:
+        action-class: connected
+        consequence: read
+        token:
+          required: false
+          max-ttl-seconds: 3600
+        audit: optional
+        human-in-the-loop: not-required
+      x-apievangelist-notes: >-
+        Safe, anonymous, retryable. Requires an addressId obtained from findAddress; the pipe
+        characters in the identifier must be URL-encoded. `details` is double-encoded JSON and
+        must be parsed a second time. Risk output is a hazard indication for a consumer tool -
+        it is not an underwriting decision, a premium, or advice.
+  - target: $.components.schemas.RiskLayer
+    update:
+      x-apievangelist-quirks:
+        - intensity is a numeric value typed as a string while riskIndex is an integer
+        - details is a JSON document double-encoded as a string with CRLF line breaks
+  - target: $.components.schemas.AddressCandidate
+    update:
+      x-apievangelist-quirks:
+        - latitude and longitude were null on every observed response
+        - id contains pipe characters that require URL encoding when used as a query parameter

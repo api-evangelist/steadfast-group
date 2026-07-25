@@ -1,0 +1,129 @@
+generated: '2026-07-25'
+method: derived
+source: >-
+  Derived from openapi/steadfast-group-flood-risk-tracker-openapi.yml,
+  well-known/steadfast-group-openid-configuration.json and live probes on 2026-07-25.
+note: >-
+  Conformance is asserted from observed behaviour and published discovery documents only.
+  Steadfast Group makes no public conformance or certification claim of any kind - no trust
+  centre, no compliance page, no standards statement. Nothing here is a provider claim.
+standards:
+  - id: oauth2
+    conforms: true
+    evidence: >-
+      idp.steadfast.com.au publishes an RFC 8414 authorization server metadata document with
+      authorization, token, introspection, revocation and device-authorization endpoints.
+  - id: rfc8414-authorization-server-metadata
+    conforms: true
+    evidence: /.well-known/oauth-authorization-server returns 200 application/json.
+  - id: openid-connect-discovery-1.0
+    conforms: true
+    evidence: /.well-known/openid-configuration returns 200 with issuer, jwks_uri, userinfo_endpoint and claims_supported.
+  - id: oidc-core-1.0
+    conforms: true
+    evidence: Standard OIDC scopes (openid, profile, email, address, phone, offline_access) and standard claims advertised; RS256 id_token signing.
+  - id: rfc7636-pkce
+    conforms: true
+    evidence: code_challenge_methods_supported = [S256].
+  - id: rfc9449-dpop
+    conforms: true
+    evidence: dpop_signing_alg_values_supported advertises RS256/384/512 and ES256/384/512.
+  - id: rfc7591-dynamic-client-registration
+    conforms: partial
+    evidence: >-
+      registration_endpoint is advertised at /oauth2/v1/clients but returns 403 "Invalid session"
+      to anonymous requests - the endpoint exists, self-serve registration does not.
+  - id: rfc7662-token-introspection
+    conforms: true
+    evidence: introspection_endpoint advertised at /oauth2/v1/introspect.
+  - id: rfc7009-token-revocation
+    conforms: true
+    evidence: revocation_endpoint advertised at /oauth2/v1/revoke.
+  - id: rfc8628-device-authorization-grant
+    conforms: true
+    evidence: device_authorization_endpoint advertised and urn:ietf:params:oauth:grant-type:device_code in grant_types_supported.
+  - id: oauth-2.1-readiness
+    conforms: false
+    evidence: >-
+      The implicit response types and the resource-owner password grant remain enabled, both of
+      which OAuth 2.1 removes.
+  - id: rfc9457-problem-details
+    conforms: true
+    evidence: >-
+      The Flood Risk Tracker API returns application/problem+json with type/title/status/errors
+      on validation failure.
+  - id: rfc9110-http-semantics
+    conforms: partial
+    evidence: >-
+      Problem type URIs correctly reference RFC 9110 status-code sections, but unsupported
+      methods return 404 instead of 405 and "not found" is signalled as 200 with an empty array.
+  - id: w3c-trace-context
+    conforms: partial
+    evidence: A traceparent-formatted traceId is returned in error bodies; no trace header is emitted on success.
+  - id: rfc9116-security-txt
+    conforms: false
+    evidence: No /.well-known/security.txt on any Steadfast host.
+  - id: rfc9727-api-catalog
+    conforms: false
+    evidence: No /.well-known/api-catalog on any Steadfast host.
+  - id: openapi
+    conforms: false
+    evidence: >-
+      Steadfast publishes no OpenAPI. The specification in openapi/ was derived by API Evangelist
+      from observed traffic.
+  - id: asyncapi
+    conforms: false
+    evidence: No event, streaming or webhook surface of any kind was found.
+  - id: graphql
+    conforms: false
+    evidence: /graphql returns 404 on the corporate site, the broker portal and the flood tracker.
+  - id: acord
+    conforms: false
+    evidence: >-
+      Governance signal only. Founder/MD/CEO Robert B. Kelly AM chairs the ACORD Board in New
+      York, but no ACORD, AL3, ACORD XML or NGDS implementation detail appears anywhere on the
+      public estate - one mention across all 311 sitemap URLs, in his biography.
+  - id: acord-al3
+    conforms: false
+    evidence: Zero references across the public site.
+  - id: acord-ngds
+    conforms: false
+    evidence: Zero references across the public site.
+  - id: cdr-australia
+    conforms: false
+    evidence: >-
+      The Australian Consumer Data Right was designated to extend to general insurance and then
+      deferred. No CDR obligation applies to Steadfast and no CDR endpoints exist.
+  - id: fapi
+    conforms: false
+    evidence: No FAPI profile, no mTLS-bound tokens, no par/jarm endpoints advertised.
+  - id: fhir
+    conforms: false
+    evidence: Not a healthcare API.
+  - id: scim
+    conforms: false
+    evidence: >-
+      Not publicly exposed. The underlying Okta tenant supports SCIM as a product capability, but
+      no Steadfast SCIM endpoint is published or discoverable.
+  - id: odata
+    conforms: false
+  - id: json-api
+    conforms: false
+    evidence: Responses are bare JSON arrays with no JSON:API document structure.
+  - id: hal
+    conforms: false
+  - id: pagination-conventions
+    conforms: false
+    evidence: findAddress returns an unbounded array with no paging parameters.
+  - id: idempotency-key
+    conforms: not-applicable
+    evidence: Read-only surface - no unsafe operations exist to require an idempotency key.
+regulatory_context:
+  jurisdiction: Australia
+  regulators:
+    - APRA (prudential supervision of insurers)
+    - ASIC (financial services licensing, of which insurance broking is part)
+  open_data_mandate: >-
+    None in force. The Consumer Data Right opened banking and energy and was designated to
+    extend to general insurance, then deferred and de-prioritised. There is no regulatory
+    forcing function requiring Steadfast to publish an API.

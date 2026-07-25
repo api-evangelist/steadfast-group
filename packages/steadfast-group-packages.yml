@@ -1,0 +1,40 @@
+generated: '2026-07-25'
+method: searched
+source: >-
+  npm registry search, PyPI, NuGet (azuresearch), RubyGems and the Steadfast public site,
+  probed 2026-07-25
+packages: []
+official_sdk_count: 0
+note: >-
+  Steadfast Group ships no client libraries in any language. There is nothing to wrap - the one
+  public API is undocumented and the rest of the estate is behind a login. No SDKs pointer is
+  emitted for this provider.
+homonym_warning: >-
+  "Steadfast" is a heavily collided package name. Every npm hit belongs to something else -
+  Steadfast Courier Limited, a Bangladeshi parcel-delivery company (steadfast-courier,
+  @dreygur/steadfast-api, steadfast-courier-sdk, steadfast-fraud, bddeliveries, routexpress-bd,
+  @classytic/bd-logistics), an unrelated promise utility (steadfast, novemberborn), and an
+  unrelated design system (@sandeep12.patil/sf-*, github.com/steadfast/steadfast-frontend). None
+  is attributable to Steadfast Group Limited of Sydney. Do not wire any of these into this
+  record.
+registries_probed:
+  - registry: npm
+    query: steadfast
+    first_party_hits: 0
+  - registry: pypi
+    query: steadfast
+    first_party_hits: 0
+    note: A package named "steadfast" exists on PyPI but is unrelated to Steadfast Group.
+  - registry: nuget
+    query: steadfast
+    first_party_hits: 0
+    note: Probed because the estate is ASP.NET-based; no first-party package found.
+  - registry: rubygems
+    query: steadfast
+    first_party_hits: 0
+  - registry: github
+    query: Steadfast organisations
+    first_party_hits: 0
+    note: >-
+      github.com/Steadfast is "Steadfast Creative", unrelated. github.com/Steadfast-Technologies
+      is an empty organisation. No official Steadfast Group GitHub presence exists.

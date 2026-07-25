@@ -1,0 +1,114 @@
+generated: '2026-07-25'
+method: searched
+source: live probes of /.well-known/* across every Steadfast Group host on 2026-07-25
+summary: >-
+  Two real discovery documents were found, both on idp.steadfast.com.au - Steadfast Group's
+  Okta-hosted identity provider. It publishes a complete, anonymous OpenID Connect discovery
+  document (RFC 8414 / OIDC Discovery 1.0) covering authorization, token, userinfo, JWKS,
+  introspection, revocation, device-authorization, dynamic-client-registration and logout
+  endpoints. No other Steadfast host publishes anything at /.well-known/ - no security.txt
+  (RFC 9116) exists anywhere in the estate, and no api-catalog (RFC 9727) or ai-plugin.json
+  is published. The api.steadfast.com.au partner host returns 503 on every /.well-known/ path.
+hosts:
+  - host: https://idp.steadfast.com.au
+    role: Identity provider (Okta) fronting the broker portal and internal applications
+    documents:
+      - path: /.well-known/openid-configuration
+        status: 200
+        content_type: application/json
+        file: steadfast-group-openid-configuration.json
+      - path: /.well-known/oauth-authorization-server
+        status: 200
+        content_type: application/json
+        file: steadfast-group-oauth-authorization-server.json
+      - path: /.well-known/security.txt
+        status: 405
+      - path: /.well-known/api-catalog
+        status: 405
+      - path: /.well-known/oauth-protected-resource
+        status: 405
+      - path: /.well-known/ai-plugin.json
+        status: 404
+      - path: /.well-known/webfinger
+        status: 400
+        note: Present but requires a resource parameter; not harvested.
+  - host: https://www.steadfast.com.au
+    role: Corporate and consumer marketing site
+    documents:
+      - path: /.well-known/security.txt
+        status: 404
+      - path: /security.txt
+        status: 404
+      - path: /.well-known/openid-configuration
+        status: 404
+      - path: /.well-known/oauth-authorization-server
+        status: 404
+      - path: /.well-known/api-catalog
+        status: 404
+      - path: /.well-known/ai-plugin.json
+        status: 404
+      - path: /llms.txt
+        status: 404
+  - host: https://api.steadfast.com.au
+    role: Undocumented partner API host (403 at root)
+    documents:
+      - path: /.well-known/openid-configuration
+        status: 503
+      - path: /.well-known/oauth-authorization-server
+        status: 503
+      - path: /.well-known/security.txt
+        status: 503
+      - path: /.well-known/api-catalog
+        status: 503
+      - path: /.well-known/ai-plugin.json
+        status: 503
+  - host: https://broker.steadfast.com.au
+    role: Credentialed broker portal (login wall)
+    documents:
+      - path: /.well-known/security.txt
+        status: 404
+      - path: /.well-known/openid-configuration
+        status: 404
+      - path: /.well-known/oauth-authorization-server
+        status: 404
+      - path: /.well-known/api-catalog
+        status: 404
+  - host: https://floodrisktracker.steadfast.com.au
+    role: Public Flood Risk Tracker web tool and its JSON API
+    documents:
+      - path: /.well-known/security.txt
+        status: 404
+      - path: /openapi.json
+        status: 404
+      - path: /swagger/v1/swagger.json
+        status: 404
+  - host: https://investor.steadfast.com.au
+    role: Investor relations site (third-party IR platform)
+    documents:
+      - path: /.well-known/security.txt
+        status: 200
+        note: >-
+          NOT a security.txt. The IR platform returns HTTP 200 with a full text/html page for
+          unknown paths (soft 404). No RFC 9116 fields present. Recorded as a miss.
+  - host: https://steadfastagencies.com.au
+    documents:
+      - path: /.well-known/security.txt
+        status: 404
+  - host: https://www.steadfastnz.nz
+    documents:
+      - path: /.well-known/security.txt
+        status: 404
+  - host: https://www.steadfastlife.com.au
+    documents:
+      - path: /.well-known/security.txt
+        status: 404
+  - host: https://www.steadfast.com.sg
+    documents:
+      - path: /.well-known/security.txt
+        status: 404
+security_txt:
+  exists: false
+  note: >-
+    No RFC 9116 security.txt is published on any Steadfast Group host. Probed on the corporate
+    site, the broker portal, the partner API host, the identity provider, the flood tracker and
+    all four regional/divisional sites on 2026-07-25.

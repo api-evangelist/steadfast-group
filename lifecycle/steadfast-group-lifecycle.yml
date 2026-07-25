@@ -1,0 +1,86 @@
+generated: '2026-07-25'
+method: derived
+source: >-
+  Observed response headers on https://floodrisktracker.steadfast.com.au and probes for status,
+  changelog, roadmap and deprecation pages across the Steadfast estate on 2026-07-25.
+versioning:
+  scheme: header-advertised, unversioned URI
+  current: '1.0'
+  evidence: >-
+    Every Flood Risk Tracker response carries `api-supported-versions: 1.0` (ASP.NET API
+    Versioning). Each RiskLayer object additionally carries a data `version` field, observed as
+    `/v1/`. No version appears in the URI path and no version negotiation parameter was observed.
+  docs: null
+deprecation:
+  policy_published: false
+  policy_url: null
+  sunset_header: false
+  deprecation_header: false
+  detail: >-
+    No deprecation policy, no RFC 8594 Sunset header and no Deprecation header were observed or
+    published. Because the API is undocumented, a breaking change would reach consumers without
+    any notice channel at all.
+status_page:
+  exists: false
+  probed:
+    - url: https://status.steadfast.com.au/
+      status: 000
+      note: DNS does not resolve.
+    - url: https://www.steadfast.com.au/status
+      status: 404
+  detail: >-
+    Steadfast Group operates no public status page for any surface, including the credentialed
+    broker portal on which 414 brokerages depend.
+sla:
+  published: false
+  url: null
+  uptime_target: null
+  detail: No public SLA or uptime commitment for any Steadfast surface.
+changelog:
+  published: false
+  detail: >-
+    No dated API changelog or release-notes feed exists. Product change is announced through
+    corporate media releases under /well-covered/media-releases/, which are marketing
+    announcements rather than a versioned change record.
+  nearest_equivalent: https://www.steadfast.com.au/well-covered/media-releases/
+roadmap:
+  published: false
+  detail: >-
+    No public product or API roadmap. Forward-looking platform direction (the consolidation of
+    SCTP and INSIGHT into "Steadfast Apps") is disclosed only through ASX investor material and
+    media releases.
+  nearest_equivalent: https://investor.steadfast.com.au/investor-centre/
+deprecated_operations: []
+platform_lifecycle_context:
+  - >-
+    The Steadfast Client Trading Platform (SCTP) launched in 2009 and transacted over $1.5bn in
+    gross written premium in CY25 across 9 insurer lines and 23 connected partners.
+  - >-
+    SCTP and the INSIGHT policy management platform are being consolidated into a broader
+    "Steadfast Apps" broking platform covering the end-to-end client, policy and claims
+    lifecycle. The public media release describes "an innovative configuration engine which
+    removes the requirement for lengthy and costly development" - configuration, explicitly not
+    a published API.
+  - >-
+    A UAT tier of the partner API estate exists and is externally visible in certificate
+    transparency (api-sf-uat.steadfast.com.au), which indicates an internal
+    environment-promotion lifecycle even though nothing about it is documented publicly.
+environments:
+  - name: production
+    host: https://api-sf.steadfast.com.au
+    status: 403 at root
+    public: false
+  - name: uat
+    host: https://api-sf-uat.steadfast.com.au
+    status: no HTTPS response
+    public: false
+    note: Discovered via certificate transparency; not reachable anonymously.
+  - name: production
+    host: https://api.steadfast.com.au
+    status: 403 at root, 503 on /.well-known/
+    public: false
+  - name: production
+    host: https://floodrisktracker.steadfast.com.au
+    status: 200
+    public: true
+    note: The only publicly reachable API surface in the estate.

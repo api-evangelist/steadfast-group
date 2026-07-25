@@ -6,11 +6,30 @@ Steadfast Group Limited (ASX:SDF) is the largest general insurance broker networ
 
 ## APIs
 
-**None.** Steadfast Group publishes no public, self-serve API and no downloadable API specification.
+**Two — neither documented, neither announced.** Steadfast Group still publishes no developer portal, no API documentation and no specification of any kind. The first-round review recorded that correctly. A second enrichment round on 2026-07-25 went past the marketing site and found two genuinely machine-readable surfaces the estate never mentions.
 
-This is the honest and expected outcome for a broker-intermediary in a market with no open-insurance mandate, and it is recorded here deliberately rather than filled in with an invented API family.
+### 1. Flood Risk Tracker API — public, anonymous, undocumented
 
-All 311 URLs in the public sitemap were fetched and searched on 2026-07-25. Zero pages reference a developer portal, a REST API, OpenAPI, Swagger, AL3, or Sunrise Exchange. Every candidate developer host and path was probed and its HTTP status recorded in [review.yml](review.yml).
+The consumer [Flood Risk Tracker](https://floodrisktracker.steadfast.com.au/) is not just a map. Its own client JavaScript (`/Scripts/FloodRiskTracker/custom.js`) calls two JSON endpoints that answer anonymous requests from anywhere:
+
+| Operation | Path | What it does |
+| --- | --- | --- |
+| `findAddress` | `GET /api/risk/find_address?searchText=` | Resolves free text to Australian addresses with their **G-NAF** national identifiers |
+| `getFloodRisk` | `GET /api/risk/get_flood_risk?addressId=` | Returns **Swiss Re** river-flood and coastal storm-surge risk layers for that address |
+
+No API key, no token, no cookie. ASP.NET Core behind Cloudflare, advertising `api-supported-versions: 1.0`, returning **RFC 9457 `application/problem+json`** on validation failure with a W3C Trace Context `traceId`. Australia-only; a New Zealand address returns an empty array.
+
+There is no Steadfast specification for it, so one was **derived** from the client JavaScript and from live probes — every path, field, status code and example in [`openapi/`](openapi/steadfast-group-flood-risk-tracker-openapi.yml) was observed in a real response, and the verbatim exchanges are in [`examples/`](examples/steadfast-group-flood-risk-tracker-examples.yml). It is unsupported, uncommitted, and can change or close without notice. Treat it as observational intelligence, not as an interface Steadfast offers.
+
+### 2. Steadfast Identity — an Okta OIDC provider with public discovery
+
+`idp.steadfast.com.au` publishes a complete, anonymously readable **OpenID Connect discovery document**: authorization, token, userinfo, JWKS, introspection, revocation, device-authorization, dynamic-client-registration and logout endpoints, seven scopes, **PKCE S256** and **DPoP** proof-of-possession. The first round probed `broker.` and `api.` for `/.well-known/openid-configuration` and got 404/503; the IdP is on a third host, surfaced here through certificate transparency.
+
+Discovery is open, access is not — anonymous client registration returns 403. The ROPC `password` grant and `implicit` response types are still enabled, both removed by OAuth 2.1. Captured verbatim in [`well-known/`](well-known/), profiled in [`authentication/`](authentication/steadfast-group-authentication.yml) and [`scopes/`](scopes/steadfast-group-scopes.yml).
+
+### The rest is still shut
+
+All 311 URLs in the public sitemap were fetched and searched on 2026-07-25. Zero pages reference a developer portal, a REST API, OpenAPI, Swagger, AL3, or Sunrise Exchange. Every candidate developer host and path was probed and its HTTP status recorded in [review.yml](review.yml). Certificate transparency additionally exposed `api-sf` and `api-sf-uat` — a production/UAT partner API pair — both closed to anonymous requests.
 
 ### What actually exists
 
@@ -41,14 +60,22 @@ Australia has the legal machinery for open insurance and no live obligation. APR
 | Surface | Status |
 | --- | --- |
 | Self-serve signup | None |
-| API keys / OAuth2 client registration | None published |
-| `/.well-known/openid-configuration` | 404 on broker, 503 on api |
+| API keys | None published; the public API requires no credential at all |
+| OAuth2 / OIDC | **Live** — `idp.steadfast.com.au`, discovery public, registration 403 |
+| `/.well-known/openid-configuration` | **200 on idp**; 404 on broker, 503 on api |
 | Webhooks / event catalog / AsyncAPI | None found |
-| GraphQL | `/graphql` → 404 |
+| GraphQL | `/graphql` → 404 on every host |
 | gRPC / `.proto` | None found |
 | Postman public workspace | 0 results for "steadfast insurance" |
 | Official GitHub organization | None attributable |
-| `llms.txt` / `security.txt` | 404 |
+| SDKs / client libraries | None — every "steadfast" package belongs to Steadfast Courier (Bangladesh) |
+| Status page / changelog / roadmap / SLA | None |
+| `llms.txt` / `security.txt` | 404 everywhere in the estate |
+| Bug bounty / VDP / trust centre | None found |
+
+## Artifacts in this repository
+
+`openapi/` derived spec · `examples/` verbatim live exchanges · `overlays/` catalog annotations · `well-known/` harvested OIDC + OAuth metadata and every probe status · `authentication/` · `scopes/` · `conventions/` observed semantics and data quirks · `errors/` RFC 9457 catalogue · `data-model/` entity graph · `conformance/` standards posture including the ACORD gap · `lifecycle/` versioning and everything absent · `security/` TLS/HSTS/DNSSEC/CAA/SPF/DMARC posture · `mcp/` candidate tools and crosswalk · `skills/` agent skill · `agentic-access/` · `packages/` negative finding and homonym traps · `llms/`
 
 ## Tags
 

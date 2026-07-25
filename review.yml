@@ -8,6 +8,87 @@ review:
   homeMarket: Australia
   tier: broker-intermediary
   gated: true
+  amended: '2026-07-25'
+  amendmentNote: >-
+    The answer above stands - there is still no developer portal and no published specification.
+    But the round-2 enrichment pass materially changed the picture beneath it. See
+    roundTwoCorrections below: a live public anonymous API and a public OIDC discovery document
+    were both found. Findings in this file that assert "no public API surface", "no published
+    token endpoint" and "no OAuth2 client registration" are superseded by that block.
+roundTwoCorrections:
+  date: '2026-07-25'
+  method: >-
+    Went past the marketing site and the sitemap: read the client JavaScript of the public web
+    tools, probed the API host roots directly, and enumerated the estate through certificate
+    transparency (crt.sh) rather than a guessed subdomain word list.
+  corrections:
+  - supersedes: specifications.openapiHarvested = false
+    finding: >-
+      A live, public, anonymous JSON API exists at floodrisktracker.steadfast.com.au. Its own
+      client script /Scripts/FloodRiskTracker/custom.js calls GET /api/risk/find_address
+      (searchText) and GET /api/risk/get_flood_risk (addressId). Both were exercised
+      unauthenticated and returned 200 application/json. Steadfast publishes no specification, so
+      an OpenAPI 3.1 was derived from observed traffic into
+      openapi/steadfast-group-flood-risk-tracker-openapi.yml with verbatim exchanges in
+      examples/. The prior round probed /openapi.json and /swagger.json on this host - both 404 -
+      but did not read the tool's own JavaScript, which is where the contract was.
+    evidence:
+    - url: https://floodrisktracker.steadfast.com.au/api/risk/find_address?searchText=1%20Market%20Street
+      status: 200
+      contentType: application/json; charset=utf-8
+    - url: https://floodrisktracker.steadfast.com.au/api/risk/get_flood_risk?addressId=AU%7CGNAF%7CGANSW705226154
+      status: 200
+      contentType: application/json; charset=utf-8
+    - url: https://floodrisktracker.steadfast.com.au/api/risk/get_flood_risk
+      status: 400
+      contentType: application/problem+json; charset=utf-8
+      note: RFC 9457 problem details with a W3C Trace Context traceId.
+    dataSources:
+      addresses: G-NAF (Geocoded National Address File), Geoscape Australia - identifiers of the form AU|GNAF|<PID>
+      hazard: Swiss Re natural catastrophe models - layers FL_Fluvial_SwissRe and FL_Surge_SwissRe
+    caveat: >-
+      Undocumented, unsupported and unannounced. CORS is pinned to a single origin
+      (https://steadfastinsurance.wufoo.com), no rate limits are published, and Steadfast has made
+      no commitment to this interface.
+  - supersedes: auth.note "no OAuth2 client registration, no published token endpoint"
+    finding: >-
+      idp.steadfast.com.au is an Okta-hosted OpenID Connect provider publishing a complete,
+      anonymously readable discovery document - authorization, token, userinfo, JWKS,
+      introspection, revocation, device-authorization, dynamic-client-registration and logout
+      endpoints, seven scopes, PKCE S256 and DPoP. The prior round probed /.well-known/ on
+      broker. and api. (404 and 503) but not on idp., which was not in its 26-name subdomain list.
+    evidence:
+    - url: https://idp.steadfast.com.au/.well-known/openid-configuration
+      status: 200
+      file: well-known/steadfast-group-openid-configuration.json
+    - url: https://idp.steadfast.com.au/.well-known/oauth-authorization-server
+      status: 200
+      file: well-known/steadfast-group-oauth-authorization-server.json
+    - url: https://idp.steadfast.com.au/oauth2/v1/keys
+      status: 200
+    - url: https://idp.steadfast.com.au/oauth2/v1/clients
+      status: 403
+      note: Dynamic client registration exists but is not self-serve - "Invalid session".
+    caveat: Discovery is public; credentials are issued commercially. This is not self-serve onboarding.
+  - supersedes: subdomainEnumeration
+    finding: >-
+      Certificate transparency (crt.sh) returned 50+ hostnames under steadfast.com.au that DNS
+      word-list guessing missed, including a production/UAT partner API pair
+      (api-sf.steadfast.com.au 403, api-sf-uat.steadfast.com.au no response), the identity
+      provider (idp), intelligence, whitelabel, mft/mftconsole, fetch/fetchproxy and dcm. The UAT
+      tier is evidence of an internal environment-promotion lifecycle, though nothing about it is
+      documented publicly.
+    method_note: >-
+      Certificate transparency should be the default enumeration method for this pipeline - it is
+      exhaustive where a candidate word list is a guess.
+  unchanged:
+  - No developer portal exists on any host.
+  - No API documentation, reference, getting-started guide or SDK exists.
+  - No webhooks, AsyncAPI, GraphQL, gRPC or Postman collection exists.
+  - No security.txt, bug bounty, trust centre, status page, changelog, roadmap or SLA exists.
+  - No official GitHub organisation is attributable to Steadfast Group.
+  - No ACORD, AL3, ACORD XML or NGDS implementation detail is published.
+  - Quote, bind, issue and FNOL remain partner-only, behind the broker login.
 findings:
   summary: |
     Steadfast Group Limited (ASX:SDF), the largest general insurance broker network

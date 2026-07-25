@@ -1,0 +1,82 @@
+generated: '2026-07-25'
+method: derived
+source: openapi/steadfast-group-flood-risk-tracker-openapi.yml
+format: rfc9457
+envelope:
+  media_type: application/problem+json
+  implementation: ASP.NET Core ValidationProblemDetails
+  fields:
+    - name: type
+      description: Problem type URI. Observed as a link to the matching RFC 9110 status-code section rather than a Steadfast-owned problem registry.
+    - name: title
+      description: Short human-readable summary of the problem type.
+    - name: status
+      description: HTTP status code, duplicated in the body.
+    - name: errors
+      description: Map of request parameter name to an array of validation messages.
+    - name: traceId
+      description: W3C Trace Context traceparent value for the failed request; the only correlation identifier exposed.
+  note: >-
+    Steadfast publishes no error reference. This catalogue is derived entirely from observed
+    live responses of the public Flood Risk Tracker API on 2026-07-25. The API returns RFC 9457
+    problem details for validation failures, which is a better error posture than most
+    undocumented endpoints - but there is no problem-type registry, no application-level error
+    codes, and no documented remediation guidance.
+problems:
+  - status: 400
+    type: https://tools.ietf.org/html/rfc9110#section-15.5.1
+    title: One or more validation errors occurred.
+    detail_field: errors
+    trigger: Required query parameter omitted.
+    remediation: Supply the required query parameter named in `errors`.
+    observed_examples:
+      - operation: findAddress
+        source_operation: openapi/steadfast-group-flood-risk-tracker-openapi.yml#findAddress
+        body:
+          type: https://tools.ietf.org/html/rfc9110#section-15.5.1
+          title: One or more validation errors occurred.
+          status: 400
+          errors:
+            searchText:
+              - The searchText field is required.
+          traceId: 00-615e88be363e8197c2e45ba009b64706-88ea2d1f998e39bd-00
+      - operation: getFloodRisk
+        source_operation: openapi/steadfast-group-flood-risk-tracker-openapi.yml#getFloodRisk
+        body:
+          type: https://tools.ietf.org/html/rfc9110#section-15.5.1
+          title: One or more validation errors occurred.
+          status: 400
+          errors:
+            addressId:
+              - The addressId field is required.
+          traceId: 00-ce51a3cb1302ff41a4b7b151de452c73-495f67f482a4fb3a-00
+  - status: 404
+    type: null
+    title: Not Found
+    trigger: >-
+      Any path other than the two documented operations, and any HTTP method other than GET on
+      those paths. POST and OPTIONS against /api/risk/find_address both returned 404 rather than
+      405, so unsupported methods are indistinguishable from unknown routes.
+    remediation: Use GET on /api/risk/find_address or /api/risk/get_flood_risk.
+    format: html
+non_error_empty_results:
+  note: >-
+    Both operations signal "nothing found" with HTTP 200 and an empty JSON array rather than an
+    error. An unrecognised or malformed addressId returns `[]`, not 404; a non-Australian address
+    search returns `[]`, not 404. Consumers must branch on array length, not on status code.
+  cases:
+    - operation: findAddress
+      condition: No Australian address matched the search text.
+      response: 200 with []
+    - operation: getFloodRisk
+      condition: Unrecognised or malformed addressId.
+      response: 200 with []
+other_hosts:
+  - host: https://api.steadfast.com.au
+    observed: 403 at root with an IIS error page; 404 on every probed documentation path; 503 on every /.well-known/ path.
+    note: Partner host; no public error contract.
+  - host: https://idp.steadfast.com.au
+    observed: >-
+      Okta error envelope on the client registration endpoint -
+      {"errorCode":"E0000005","errorSummary":"Invalid session","errorLink":"E0000005","errorId":"...","errorCauses":[]}.
+      This is the standard Okta error shape, not a Steadfast-defined one, and it is not RFC 9457.

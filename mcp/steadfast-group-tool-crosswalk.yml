@@ -1,0 +1,67 @@
+generated: '2026-07-25'
+method: derived
+source: >-
+  mcp/steadfast-group-mcp.yml bound to
+  openapi/steadfast-group-flood-risk-tracker-openapi.yml
+note: >-
+  Steadfast Group operates no MCP server and no GraphQL surface. This crosswalk binds the
+  candidate MCP tool set derived in mcp/steadfast-group-mcp.yml to the REST operations that back
+  it, so each tool inherits a real input schema from an operation that was actually observed
+  rather than a guessed one. Coverage is complete and trivially so - the entire public API is two
+  read operations.
+surfaces:
+  openapi:
+    file: openapi/steadfast-group-flood-risk-tracker-openapi.yml
+    published_by_provider: false
+    note: Derived by API Evangelist from observed live traffic; the provider publishes no specification.
+    operations: 2
+    gated: false
+  graphql:
+    endpoint: null
+    note: >-
+      No GraphQL surface exists. /graphql returns 404 on www.steadfast.com.au,
+      broker.steadfast.com.au and floodrisktracker.steadfast.com.au.
+  mcp:
+    url: null
+    published: false
+    note: No first-party MCP server exists. The tool list is a derived candidate, not a live server.
+    gated: not-applicable
+  oauth:
+    issuer: https://idp.steadfast.com.au
+    note: >-
+      The estate's Okta OIDC provider is publicly discoverable but protects the broker portal,
+      not the public API. No MCP tool requires a token.
+crosswalk:
+  - tool: find_address
+    category: address
+    rest:
+      - findAddress
+    binding: rest
+    confidence: high
+    note: >-
+      One-to-one. Input schema is the operation's single required query parameter `searchText`;
+      output is the operation's 200 array of AddressCandidate.
+  - tool: get_flood_risk
+    category: risk
+    rest:
+      - getFloodRisk
+    binding: rest
+    confidence: high
+    note: >-
+      One-to-one. Input schema is the operation's single required query parameter `addressId`,
+      which must come from find_address.
+mcp_only: []
+rest_only: []
+coverage:
+  tools_named: 2
+  tools_bound: 2
+  mcp_only: 0
+  graphql_only: 0
+  rest_operations_total: 2
+  rest_operations_with_tool: 2
+  binding_completeness: 1.0
+divergence_note: >-
+  No divergence to record. The real divergence in this estate is not between surfaces but between
+  what is public and what is not - the quote, bind, issue and claims capability of SCTP, INSIGHT
+  and Steadfast Apps is reachable only through a credentialed broker portal and a commercially
+  arranged partner API host, neither of which exposes a machine-readable contract of any kind.
