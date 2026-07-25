@@ -1,0 +1,87 @@
+aid: steadfast-group
+url: https://raw.githubusercontent.com/api-evangelist/steadfast-group/refs/heads/main/apis.yml
+name: Steadfast Group
+kind: company
+description: >-
+  Steadfast Group Limited (ASX:SDF) is the largest general insurance broker network and the largest
+  group of insurance underwriting agencies in Australasia, headquartered in Sydney, Australia. It is a
+  broker-intermediary rather than a risk carrier: the Steadfast Network comprises 414 independent
+  brokerages placing approximately $12.7 billion in gross written premium, alongside 31 underwriting
+  agencies writing roughly 100 products across business pack, liability, professional indemnity, cyber,
+  construction, marine, aviation, farm, strata, motor and home and contents lines, plus complementary
+  businesses covering premium funding (IQumulate), life insurance, workplace risk, legal and compliance.
+  Its trading technology is the Steadfast Client Trading Platform (SCTP), launched in 2009, which lets
+  network brokers send one question set to a panel of insurers for instant comparative quotes and which
+  transacted over $1.5 billion in GWP in CY25 across 9 insurer lines and 23 connected partners; SCTP and
+  the INSIGHT policy management platform are being consolidated into a broader "Steadfast Apps" broking
+  platform. API posture, recorded honestly - Steadfast Group publishes NO public, self-serve developer
+  portal and NO downloadable API specification. A full crawl of all 311 pages in the public sitemap
+  returned zero references to a developer portal, REST API, OpenAPI, or Swagger. The only integration
+  surfaces are partner-gated: broker.steadfast.com.au is a credentialed broker login wall, and
+  api.steadfast.com.au is a live but undocumented host returning HTTP 403 at the root and 404 on every
+  probed documentation path. Insurer and partner connectivity into SCTP is arranged commercially, not
+  through self-serve onboarding. The company's most notable standards signal is governance rather than
+  implementation: founder, Managing Director and CEO Robert B. Kelly AM is Chair of the ACORD Board in
+  New York, though no ACORD, AL3, ACORD XML or NGDS implementation detail is published anywhere on the
+  public site. Australia has the legal machinery for open insurance but no live obligation - the
+  Consumer Data Right was designated to extend to general insurance and then deferred, so no regulatory
+  forcing function pushes a broker network of this scale toward a public API.
+image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+tags:
+- Insurance
+- Australia
+- Broker
+- Insurance Broker Network
+- General Insurance
+- Property and Casualty
+- Underwriting Agency
+- Agency Management
+- ACORD
+- Partner Gated
+- New Zealand
+created: '2026-07-25'
+modified: '2026-07-25'
+specificationVersion: '0.19'
+apis: []
+common:
+- type: Website
+  url: https://www.steadfast.com.au/
+- type: About
+  url: https://www.steadfast.com.au/about-us/
+- type: BoardAndManagement
+  url: https://www.steadfast.com.au/about-us/board-and-management/
+- type: InvestorRelations
+  url: https://investor.steadfast.com.au/investor-centre/
+- type: LinkedIn
+  url: https://www.linkedin.com/company/steadfast-group-limited/
+- type: Blog
+  url: https://www.steadfast.com.au/well-covered/
+- type: Contact
+  url: https://www.steadfast.com.au/contact-us/
+- type: PrivacyPolicy
+  url: https://www.steadfast.com.au/privacy-policy/
+- type: Legal
+  url: https://www.steadfast.com.au/legal/
+- type: CodeOfPractice
+  url: https://www.steadfast.com.au/codes-of-practice/
+- type: PartnerPortal
+  url: https://broker.steadfast.com.au/
+  name: Steadfast Broker Login - credentialed broker portal (login wall, not a developer portal)
+- type: Website
+  url: https://steadfastagencies.com.au/
+  name: Steadfast Underwriting Agencies
+- type: Website
+  url: https://www.steadfastlife.com.au/
+  name: Steadfast Life
+- type: Website
+  url: https://www.steadfastnz.nz/
+  name: Steadfast New Zealand
+- type: Website
+  url: https://www.steadfast.com.sg/
+  name: Steadfast Singapore
+- type: Tool
+  url: https://floodrisktracker.steadfast.com.au/
+  name: Steadfast Flood Risk Tracker - public web tool, no published API (renders via Google Maps JS)
+maintainers:
+- FN: Kin Lane
+  email: kin@apievangelist.com

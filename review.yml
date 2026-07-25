@@ -1,0 +1,263 @@
+aid: steadfast-group
+name: Steadfast Group
+review:
+  question: Does Steadfast Group expose a public, self-serve developer portal or downloadable API specification?
+  answer: false
+  date: '2026-07-25'
+  reviewer: API Evangelist
+  homeMarket: Australia
+  tier: broker-intermediary
+  gated: true
+findings:
+  summary: |
+    Steadfast Group Limited (ASX:SDF), the largest general insurance broker network
+    and largest group of underwriting agencies in Australasia, publishes NO public
+    developer portal and NO downloadable API specification. Every candidate
+    developer host and path was probed and confirmed by HTTP status. All 311 URLs
+    in the public sitemap were fetched and searched: zero matches for "developer
+    portal", "REST API", "OpenAPI", "Swagger", "api.steadfast", "/developers",
+    "AL3", or "Sunrise Exchange".
+
+    Two integration surfaces exist and both are partner-gated. broker.steadfast.com.au
+    returns HTTP 200 but redirects to /login?returnUrl=%2F and renders a page titled
+    "Steadfast Broker Login" - a credentialed broker portal, not a developer portal.
+    api.steadfast.com.au resolves (Azure, 40.126.241.84) and is a live IIS host, but
+    returns HTTP 403 Forbidden at the root with no body other than the IIS error page,
+    and HTTP 404 on /swagger, /swagger/v1/swagger.json, /api, /v1, /docs, /health and
+    /index.html. It is an undocumented private/partner API host with no public
+    reference material of any kind.
+
+    The company's trading technology is the Steadfast Client Trading Platform (SCTP),
+    launched 2009, which lets network brokers submit one question set to a panel of
+    insurers for comparative quotes; it transacted over $1.5bn GWP in CY25 across
+    9 insurer lines and 23 connected partners. SCTP and the INSIGHT cloud policy
+    management platform are being consolidated into "Steadfast Apps" for end-to-end
+    client, policy and claims lifecycle management. The public media release for that
+    consolidation describes "an innovative configuration engine which removes the
+    requirement for lengthy and costly development" - configuration, explicitly not
+    a published API. Insurer/partner connectivity into SCTP is arranged commercially.
+
+    Note on scope: Ebix Australia (ebix.com.au, operator of Sunrise Exchange, WinBEAT
+    NEXT, Evolution, OneOffice) was probed and its site still self-describes as "part
+    of Ebix Limited" with no Steadfast branding. Sunrise Exchange is therefore NOT
+    attributed to Steadfast Group in this record.
+  developerPortal:
+    exists: false
+    url: ''
+    classification: none - no developer portal of any kind exists
+    confirmedProbes:
+    - url: https://developer.steadfast.com.au/
+      status: 000
+      note: DNS does not resolve.
+    - url: https://developers.steadfast.com.au/
+      status: 000
+      note: DNS does not resolve.
+    - url: https://docs.steadfast.com.au/
+      status: 000
+      note: DNS does not resolve.
+    - url: https://api.steadfast.com.au/
+      status: 403
+      note: Live IIS host on Azure (40.126.241.84). "403 - Forbidden - Access is denied."
+        No documentation. /swagger, /swagger/v1/swagger.json, /api, /v1, /docs, /health,
+        /index.html all 404. /.well-known/openid-configuration and
+        /.well-known/oauth-authorization-server return 503. Private/partner host.
+    - url: https://www.steadfast.com.au/developers
+      status: 404
+    - url: https://www.steadfast.com.au/developer
+      status: 404
+    - url: https://www.steadfast.com.au/api
+      status: 404
+    - url: https://www.steadfast.com.au/apis
+      status: 404
+    - url: https://www.steadfast.com.au/partners
+      status: 404
+    - url: https://www.steadfast.com.au/integrations
+      status: 404
+    - url: https://www.steadfast.com.au/developer-portal
+      status: 404
+    - url: https://www.steadfast.com.au/technology
+      status: 404
+    - url: https://broker.steadfast.com.au/
+      status: 200
+      note: Redirects to /login?returnUrl=%2F. Page title "Steadfast Broker Login".
+        LOGIN WALL for credentialed network brokers - classified (b), not a developer
+        portal. Hosted on Optimizely/Episerver DXP
+        (broker.steadfast.com.au.dxcloud.episerver.net).
+    - url: https://www.steadfast.com.au/
+      status: 200
+      note: Corporate/consumer marketing site. 311 sitemap URLs, all fetched and searched.
+  specifications:
+    openapiHarvested: false
+    count: 0
+    note: |
+      No OpenAPI, Swagger, AsyncAPI, GraphQL SDL, or .proto artifact was found or
+      saved. Probed and confirmed 404: /openapi.json, /swagger.json, /graphql,
+      /llms.txt, /.well-known/security.txt, /security.txt on www.steadfast.com.au;
+      /swagger/index.html, /openapi.json on api.steadfast.com.au; /swagger/index.html,
+      /api on broker.steadfast.com.au. No openapi/ directory is included in this repo
+      because nothing real was found.
+  acord:
+    posture: >-
+      ACORD board leadership, no published ACORD implementation - founder/MD/CEO
+      Robert B. Kelly AM is Chair of the ACORD Board in New York, but no ACORD, AL3,
+      ACORD XML or NGDS technical detail appears anywhere on the public site.
+    evidence:
+      url: https://www.steadfast.com.au/about-us/board-and-management/
+      status: 200
+      quote: >-
+        "Robert co-founded Steadfast and has over 52 years' experience in the insurance
+        industry. Robert is a Qualified Practising Insurance Broker, a Fellow of NIBA,
+        a Senior Associate of ANZIIF, a Certified Insurance Professional, a Fellow of
+        the AICD and the Chair of the ACORD Board in New York."
+    termSearch:
+      scope: all 311 URLs in https://www.steadfast.com.au/sitemap.xml, fetched 2026-07-25
+      ACORD: 1 page (board-and-management, the biography above)
+      AL3: 0 pages
+      ACORD XML: 0 pages
+      NGDS: 0 pages
+      Sunrise Exchange: 0 pages
+      IVANS: 0 pages
+  insuranceVerbs:
+    quote:
+      exposed: false
+      note: Comparative quoting exists inside SCTP (one question set to an insurer panel)
+        but is broker-facing behind the broker login; no public quote API is documented.
+    bind:
+      exposed: false
+      note: Binding occurs in SCTP/Steadfast Apps behind the broker login; no public API.
+    issue:
+      exposed: false
+      note: Policy issuance/administration via INSIGHT, consolidating into Steadfast Apps;
+        no public API.
+    fnol:
+      exposed: false
+      note: Claims lifecycle described as part of the Steadfast Apps end-to-end platform;
+        no public FNOL API and no claims API documentation.
+    audience: partner-only (accredited Steadfast Network brokers and contracted insurer partners)
+  auth:
+    model: Credentialed web form login to the broker portal (SAML/OIDC not observable anonymously)
+    confirmed:
+    - url: https://broker.steadfast.com.au/.well-known/openid-configuration
+      status: 404
+    - url: https://broker.steadfast.com.au/.well-known/oauth-authorization-server
+      status: 404
+    - url: https://api.steadfast.com.au/.well-known/openid-configuration
+      status: 503
+    - url: https://api.steadfast.com.au/.well-known/oauth-authorization-server
+      status: 503
+    note: No public API key issuance, no OAuth2 client registration, no published token
+      endpoint, no mTLS documentation. No self-serve signup of any kind.
+  webhooks:
+    exists: false
+    note: No event catalog, no AsyncAPI document, and no webhook documentation found.
+      Absence is the finding.
+  postman:
+    exists: false
+    note: Postman public search API queried for "steadfast insurance" on 2026-07-25 -
+      0 workspaces, 0 collections, 0 APIs, 0 teams.
+  graphql:
+    exists: false
+    note: https://www.steadfast.com.au/graphql returns 404. No GraphQL surface found.
+  grpc:
+    exists: false
+    note: No published .proto files found.
+  sourceCode:
+    githubOrganization: none attributable
+    note: github.com/Steadfast is "Steadfast Creative" (an unrelated organization,
+      blog www.steadfastcreative.com, 0 public repos). github.com/Steadfast-Technologies
+      is an empty organization with no name, blog, or repos - not attributable to
+      Steadfast Group. No official GitHub presence found.
+  transports:
+  - protocol: REST
+    scheme: https
+    baseURL: https://api.steadfast.com.au
+    documented: false
+    note: Host is live but returns 403 at root with no public documentation. Existence
+      confirmed by DNS + HTTP; purpose and contract are not public.
+  - protocol: HTML
+    scheme: https
+    baseURL: https://broker.steadfast.com.au
+    documented: false
+    note: Credentialed broker web application (Optimizely/Episerver DXP). Human UI only.
+  - protocol: GraphQL
+    documented: false
+  - protocol: WebSocket
+    documented: false
+  - protocol: gRPC
+    documented: false
+  - protocol: AsyncAPI/Webhooks
+    documented: false
+  subdomainEnumeration:
+    method: DNS resolution of 26 candidate hostnames under steadfast.com.au on 2026-07-25
+    resolved:
+    - api.steadfast.com.au -> 40.126.241.84
+    - broker.steadfast.com.au -> broker.steadfast.com.au.dxcloud.episerver.net
+    unresolved:
+    - apis, dev, developer, developers, docs, sandbox, partner, partners, portal,
+      gateway, gw, integration, integrations, swagger, openapi, graphql, identity,
+      auth, login, sso, id, oauth, apps, insight, sctp, quote, claims
+  marketContext: |
+    Australia has the legal machinery for open insurance and no live obligation.
+    APRA handles prudential supervision, and the Consumer Data Right - which already
+    opened banking and energy - was designated to extend to general insurance and
+    then deferred and de-prioritized. There is therefore no regulatory forcing
+    function that would make a broker network of this scale publish a public API,
+    and Steadfast has not published one voluntarily. Its integration value sits in
+    the closed SCTP insurer panel, which is a commercial network effect rather than
+    an open interface.
+sources:
+- url: https://www.steadfast.com.au/
+  type: Website
+  status: 200
+  note: Corporate homepage. Meta description - "Steadfast Group is the largest general
+    insurance broker network in Australasia."
+- url: https://www.steadfast.com.au/about-us/
+  type: About
+  status: 200
+  note: 414 brokerages, $12.7bn GWP, 31 underwriting agencies, ~100 products, ASX-listed
+    2013 at $1.15, market cap $4.67bn at Dec 2025. SCTP $1.5bn GWP, 9 insurer lines,
+    23 partners at Dec 2025.
+- url: https://www.steadfast.com.au/about-us/board-and-management/
+  type: About
+  status: 200
+  note: Sole ACORD reference on the entire public site - Robert B. Kelly AM is Chair
+    of the ACORD Board in New York.
+- url: https://www.steadfast.com.au/well-covered/media-releases/steadfast-insurtech-platform-expands-to-deliver-end-to-end-client-management/
+  type: PressRelease
+  status: 200
+  note: Steadfast Apps consolidating SCTP + INSIGHT into end-to-end broking; describes
+    a "configuration engine which removes the requirement for lengthy and costly
+    development". No API named.
+- url: https://www.steadfast.com.au/well-covered/media-releases/steadfast-client-trading-platform-professional-indemnity-insurer-panel-expands/
+  type: PressRelease
+  status: 200
+  note: SCTP PI insurer panel expands to five insurers with Chubb; >$1.5bn GWP CY25.
+    No API, no data standards mentioned.
+- url: https://www.steadfast.com.au/sitemap.xml
+  type: Sitemap
+  status: 200
+  note: 311 URLs, all fetched and keyword-searched on 2026-07-25.
+- url: https://broker.steadfast.com.au/
+  type: PartnerPortal
+  status: 200
+  note: Login wall - "Steadfast Broker Login".
+- url: https://api.steadfast.com.au/
+  type: APIHost
+  status: 403
+  note: Live undocumented host.
+- url: https://www.ebix.com.au/
+  type: ThirdParty
+  status: 200
+  note: Probed to test a Sunrise Exchange attribution. Site still self-describes as
+    "Ebix Australia, a part of Ebix Limited" with products Evolution, OneOffice,
+    Sunrise Exchange, WinBEAT NEXT, Ebix Trades Monitor. No Steadfast branding.
+    Sunrise Exchange NOT attributed to Steadfast Group.
+actions:
+  apisYmlUpdated: true
+  apisListed: 0
+  openapiDirectoryCreated: false
+  reason: |
+    No public, self-serve API surface exists for Steadfast Group. apis[] is
+    deliberately empty and no openapi/ directory was created, because recording the
+    absence accurately is the correct outcome for a partner-gated broker
+    intermediary in a market with no open-insurance mandate.
