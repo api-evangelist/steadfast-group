@@ -2,13 +2,12 @@ generated: '2026-07-25'
 method: derived
 status: candidate
 source: openapi/steadfast-group-flood-risk-tracker-openapi.yml
-note: >-
-  Steadfast Group publishes no MCP server. Searched the docs estate, npm (@modelcontextprotocol
-  and steadfast-* packages, all of which are unrelated Bangladeshi courier libraries) and the
-  public MCP registries on 2026-07-25 - nothing first-party exists. The tools below are a
-  CANDIDATE surface derived from the two operations of the public Flood Risk Tracker API. They
-  are not offered by Steadfast and no endpoint hosts them; they describe what an MCP server over
-  this API would expose, with input schemas inherited verbatim from the derived OpenAPI.
+note: Steadfast Group publishes no MCP server. Searched the docs estate, npm (@modelcontextprotocol and
+  steadfast-* packages, all of which are unrelated Bangladeshi courier libraries) and the public MCP registries
+  on 2026-07-25 - nothing first-party exists. The tools below are a CANDIDATE surface derived from the
+  two operations of the public Flood Risk Tracker API. They are not offered by Steadfast and no endpoint
+  hosts them; they describe what an MCP server over this API would expose, with input schemas inherited
+  verbatim from the derived OpenAPI.
 server:
   name: steadfast-flood-risk
   published: false
@@ -16,49 +15,52 @@ server:
   url: null
   auth: none required by the underlying API
 tools:
-  - name: find_address
-    description: >-
-      Search Australian street addresses by free text and return candidate matches with their
-      G-NAF identifiers. Returns an empty list for addresses outside Australia.
-    source_operation: openapi/steadfast-group-flood-risk-tracker-openapi.yml#findAddress
-    input_schema:
-      type: object
-      properties:
-        searchText:
-          type: string
-          description: Free-text Australian address fragment, e.g. "1 Market Street".
-      required: [searchText]
-    output: Array of {id, fullAddress, latitude, longitude}
-    safety:
-      read_only: true
-      idempotent: true
-      destructive: false
-  - name: get_flood_risk
-    description: >-
-      Return Swiss Re natural-catastrophe flood risk layers - river/fluvial flood and coastal
-      storm surge - for an Australian address identified by its G-NAF id.
-    source_operation: openapi/steadfast-group-flood-risk-tracker-openapi.yml#getFloodRisk
-    input_schema:
-      type: object
-      properties:
-        addressId:
-          type: string
-          description: G-NAF address identifier from find_address, e.g. "AU|GNAF|GANSW705226154".
-      required: [addressId]
-    output: Array of {layerId, valueLabel, intensity, riskIndex, riskDescription, details, version}
-    safety:
-      read_only: true
-      idempotent: true
-      destructive: false
-    guidance: >-
-      Always resolve the address through find_address first - the identifier format is not
-      guessable. Parse the `details` field as JSON a second time. Present the result as a hazard
-      indication only; it is not an underwriting decision, a premium quote, or financial advice.
+- name: find_address
+  description: Search Australian street addresses by free text and return candidate matches with their
+    G-NAF identifiers. Returns an empty list for addresses outside Australia.
+  source_operation: openapi/steadfast-group-flood-risk-tracker-openapi.yml#findAddress
+  input_schema:
+    type: object
+    properties:
+      searchText:
+        type: string
+        description: Free-text Australian address fragment, e.g. "1 Market Street".
+    required:
+    - searchText
+  output: Array of {id, fullAddress, latitude, longitude}
+  safety:
+    read_only: true
+    idempotent: true
+    destructive: false
+- name: get_flood_risk
+  description: Return Swiss Re natural-catastrophe flood risk layers - river/fluvial flood and coastal
+    storm surge - for an Australian address identified by its G-NAF id.
+  source_operation: openapi/steadfast-group-flood-risk-tracker-openapi.yml#getFloodRisk
+  input_schema:
+    type: object
+    properties:
+      addressId:
+        type: string
+        description: G-NAF address identifier from find_address, e.g. "AU|GNAF|GANSW705226154".
+    required:
+    - addressId
+  output: Array of {layerId, valueLabel, intensity, riskIndex, riskDescription, details, version}
+  safety:
+    read_only: true
+    idempotent: true
+    destructive: false
+  guidance: Always resolve the address through find_address first - the identifier format is not guessable.
+    Parse the `details` field as JSON a second time. Present the result as a hazard indication only; it
+    is not an underwriting decision, a premium quote, or financial advice.
 usage_caveats:
-  - The upstream API is undocumented and unsupported and may change or close without notice.
-  - >-
-    No rate limits are published and Cloudflare fronts the host - any implementation should
-    throttle conservatively and back off on non-200 responses.
-  - >-
-    Coverage is Australia-only. Do not present an empty result as "no flood risk" - it means the
-    address was not resolved.
+- The upstream API is undocumented and unsupported and may change or close without notice.
+- No rate limits are published and Cloudflare fronts the host - any implementation should throttle conservatively
+  and back off on non-200 responses.
+- Coverage is Australia-only. Do not present an empty result as "no flood risk" - it means the address
+  was not resolved.
+deployment:
+  mode: none
+  verified: derived
+  tools: 2
+  checked: '2026-08-12'
+  source: catalog MCP census

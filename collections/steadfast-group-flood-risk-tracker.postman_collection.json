@@ -1,0 +1,299 @@
+{
+  "item": [
+    {
+      "id": "4c81b21e-83dd-403b-8c11-1bc6e95b43eb",
+      "name": "Address",
+      "description": {
+        "content": "Australian address resolution against G-NAF identifiers.",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "365ce220-2491-4628-b32f-95c07879d58a",
+          "name": "Search Australian addresses",
+          "request": {
+            "name": "Search Australian addresses",
+            "description": {
+              "content": "Resolves a free-text address fragment to a list of candidate Australian addresses, each carrying the G-NAF identifier required by `getFloodRisk`. Observed to return an empty array for addresses outside Australia (a New Zealand query returned `[]`), and to return more candidates than the tool's UI displays - the client slices the first five. Observed `latitude` and `longitude` were `null` on every candidate returned.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "risk",
+                "find_address"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "searchText",
+                  "value": "<string>",
+                  "description": "(Required) Free-text Australian address fragment, e.g. `1 Market Street`."
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "273d9639-75a2-4aaf-a609-47ea9d8e9154",
+              "name": "Candidate addresses. An empty array means no match was found.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "risk",
+                    "find_address"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "searchText",
+                      "value": "1 Market Street"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "[\n  {\n    \"id\": \"AU|GNAF|GASA_422065999\",\n    \"fullAddress\": \"1 MARKET STREET, BURRA SA 5417\",\n    \"latitude\": null,\n    \"longitude\": null\n  },\n  {\n    \"id\": \"AU|GNAF|GAVIC423795616\",\n    \"fullAddress\": \"1 MARKET STREET, NEWPORT VIC 3015\",\n    \"latitude\": null,\n    \"longitude\": null\n  }\n]",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "5a80703a-6e85-40c1-a5b7-8a3b7de9c629",
+              "name": "The required query parameter was missing. Returned as RFC 9457 problem details (ASP.NET Core `ValidationProblemDetails`).",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "risk",
+                    "find_address"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "searchText",
+                      "value": "1 Market Street"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/problem+json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/problem+json"
+                }
+              ],
+              "body": "{\n  \"type\": \"https://tools.ietf.org/html/rfc9110#section-15.5.1\",\n  \"title\": \"One or more validation errors occurred.\",\n  \"status\": 400,\n  \"errors\": {\n    \"addressId\": [\n      \"The addressId field is required.\"\n    ]\n  },\n  \"traceId\": \"00-ce51a3cb1302ff41a4b7b151de452c73-495f67f482a4fb3a-00\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    },
+    {
+      "id": "d2fa9020-359f-4833-8c25-bf87b07a45e5",
+      "name": "Risk",
+      "description": {
+        "content": "Natural-catastrophe flood risk layers for a resolved address.",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "80f31433-8d41-4c15-8347-cdc8360ff0ad",
+          "name": "Get flood risk layers for an address",
+          "request": {
+            "name": "Get flood risk layers for an address",
+            "description": {
+              "content": "Returns the natural-catastrophe flood risk layers for a G-NAF address identifier obtained from `findAddress`. Two layers were observed on every successful call: `FL_Fluvial_SwissRe` (river/fluvial flood) and `FL_Surge_SwissRe` (coastal storm surge). An unknown or malformed identifier was observed to return `200` with an empty array rather than a 404.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "risk",
+                "get_flood_risk"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "addressId",
+                  "value": "<string>",
+                  "description": "(Required) G-NAF address identifier returned in `AddressCandidate.id`, e.g. `AU|GNAF|GANSW705226154`."
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "26aa9f80-76ec-4847-b1f7-001a95a77284",
+              "name": "Risk layers for the address. An empty array means no risk data was resolved for the supplied identifier.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "risk",
+                    "get_flood_risk"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "addressId",
+                      "value": "AU|GNAF|GANSW705226154"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "[\n  {\n    \"layerId\": \"FL_Surge_SwissRe\",\n    \"valueLabel\": \"Outside\",\n    \"intensity\": \"1\",\n    \"riskIndex\": 1,\n    \"details\": \"{\\r\\n  \\\"Surge Return Period\\\": \\\"Outside\\\"\\r\\n}\",\n    \"riskDescription\": \"Low\",\n    \"version\": \"/v1/\"\n  },\n  {\n    \"layerId\": \"FL_Fluvial_SwissRe\",\n    \"valueLabel\": \"50 years\",\n    \"intensity\": \"8.9\",\n    \"riskIndex\": 7,\n    \"details\": \"{\\r\\n  \\\"FF Return Period (SR)\\\": \\\"50 years\\\",\\r\\n  \\\"FF Protection (SR)\\\": \\\"Unprotected\\\",\\r\\n  \\\"FF Schema (SR)\\\": \\\"SR_GFZ3\\\",\\r\\n  \\\"FF Code (SR)\\\": \\\"SR_GFZ3_50\\\",\\r\\n  \\\"FF Frequency (SR)\\\": \\\"Very High\\\"\\r\\n}\",\n    \"riskDescription\": \"High\",\n    \"version\": \"/v1/\"\n  }\n]",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "3000bceb-274a-47e3-904e-ed8e84f41d26",
+              "name": "The required query parameter was missing. Returned as RFC 9457 problem details (ASP.NET Core `ValidationProblemDetails`).",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "risk",
+                    "get_flood_risk"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "addressId",
+                      "value": "AU|GNAF|GANSW705226154"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/problem+json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/problem+json"
+                }
+              ],
+              "body": "{\n  \"type\": \"https://tools.ietf.org/html/rfc9110#section-15.5.1\",\n  \"title\": \"One or more validation errors occurred.\",\n  \"status\": 400,\n  \"errors\": {\n    \"addressId\": [\n      \"The addressId field is required.\"\n    ]\n  },\n  \"traceId\": \"00-ce51a3cb1302ff41a4b7b151de452c73-495f67f482a4fb3a-00\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://floodrisktracker.steadfast.com.au",
+      "key": "baseUrl"
+    }
+  ],
+  "info": {
+    "_postman_id": "6cd317ba-398b-4533-9550-5f5594147cc7",
+    "name": "Steadfast Flood Risk Tracker API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "The read-only JSON API behind Steadfast Group's public Flood Risk Tracker web tool (https://floodrisktracker.steadfast.com.au/). It resolves a free-text Australian street address against the G-NAF (Geocoded National Address File) identifier set, then returns natural-catastrophe flood risk layers for that address, sourced from Swiss Re hazard models (river/fluvial flood and coastal storm surge).\n\nPROVENANCE AND STATUS - this document is NOT published by Steadfast Group. Steadfast Group publishes no developer portal and no API specification of any kind. This OpenAPI was DERIVED by API Evangelist from the tool's own client JavaScript (/Scripts/FloodRiskTracker/custom.js, which calls both operations via jQuery $.ajax) and from live, anonymous, unauthenticated probes of the two endpoints on 2026-07-25. Every path, parameter name, field name, status code, media type and example in this document was OBSERVED in a real response - nothing is invented. It is nonetheless an undocumented, unsupported, unversioned-in-public surface that Steadfast may change or close without notice, and it should be treated as observational intelligence rather than as a contract Steadfast offers.\n\nOBSERVED RUNTIME NOTES - the API is fronted by Cloudflare and served by ASP.NET Core (`x-powered-by: ASP.NET`). Responses carry `api-supported-versions: 1.0`, and each risk layer object carries its own `version` field (observed value `/v1/`). Validation errors are returned as RFC 9457 `application/problem+json` (ASP.NET Core ValidationProblemDetails) with a W3C Trace Context `traceId`. CORS is restricted - the observed `access-control-allow-origin` is `https://steadfastinsurance.wufoo.com`, so browser-based cross-origin use from other origins is not permitted. No authentication of any kind is required or accepted; no rate limits are documented.\n\nContact Support:\n Name: Steadfast Group Limited",
+      "type": "text/plain"
+    }
+  }
+}

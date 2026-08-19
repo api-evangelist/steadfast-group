@@ -1,0 +1,64 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Steadfast Flood Risk Tracker API",
+    "version": "1.0"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Address",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Search Australian addresses",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://floodrisktracker.steadfast.com.au/api/risk/find_address",
+            "params": [
+              {
+                "name": "searchText",
+                "value": "1 Market Street",
+                "type": "query",
+                "description": "Free-text Australian address fragment, e.g. `1 Market Street`."
+              }
+            ]
+          },
+          "docs": "Resolves a free-text address fragment to a list of candidate Australian addresses, each carrying the G-NAF identifier required by `getFloodRisk`. Observed to return an empty array for addresses outside Australia (a New Zealand query returned `[]`), and to return more candidates than the tool's UI displays - the client slices the first five. Observed `latitude` and `longitude` were `null` on every candidate returned."
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Risk",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Get flood risk layers for an address",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://floodrisktracker.steadfast.com.au/api/risk/get_flood_risk",
+            "params": [
+              {
+                "name": "addressId",
+                "value": "AU|GNAF|GANSW705226154",
+                "type": "query",
+                "description": "G-NAF address identifier returned in `AddressCandidate.id`, e.g. `AU|GNAF|GANSW705226154`."
+              }
+            ]
+          },
+          "docs": "Returns the natural-catastrophe flood risk layers for a G-NAF address identifier obtained from `findAddress`. Two layers were observed on every successful call: `FL_Fluvial_SwissRe` (river/fluvial flood) and `FL_Surge_SwissRe` (coastal storm surge). An unknown or malformed identifier was observed to return `200` with an empty array rather than a 404."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}
