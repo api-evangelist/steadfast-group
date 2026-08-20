@@ -37,6 +37,18 @@ image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.j
 tags:
 - Insurance
 - Australia
+- Brokers
+- Insurance Broker Network
+- General Insurance
+- Property and Casualty
+- Underwriting Agency
+- Agency Management
+- ACORD
+- Partner Gated
+- New Zealand
+tags_raw:
+- Insurance
+- Australia
 - Broker
 - Insurance Broker Network
 - General Insurance
@@ -110,6 +122,12 @@ apis:
   humanURL: https://broker.steadfast.com.au/
   baseURL: https://idp.steadfast.com.au
   tags:
+  - Identity
+  - OpenID Connect
+  - Authentication
+  - Single Sign-On
+  - Partner Gated
+  tags_raw:
   - Identity
   - OpenID Connect
   - OAuth 2.0
