@@ -62,63 +62,16 @@ created: '2026-07-25'
 modified: '2026-07-25'
 specificationVersion: '0.23'
 apis:
-- aid: steadfast-group:flood-risk-tracker
-  name: Steadfast Flood Risk Tracker API
-  description: >-
-    The public, anonymous, read-only JSON API behind Steadfast Group's consumer Flood Risk
-    Tracker tool. Two GET operations resolve a free-text Australian street address against the
-    national G-NAF address dataset and then return Swiss Re natural-catastrophe risk layers for
-    that address - river/fluvial flood and coastal storm surge - each with a hazard value,
-    intensity, risk index and risk band. This is the only publicly reachable API surface in the
-    entire Steadfast estate. Steadfast publishes no specification, no documentation and no
-    support commitment for it; the OpenAPI in this repository was derived by API Evangelist from
-    the tool's own client JavaScript and from live anonymous probes, and every field, status code
-    and example in it was observed in a real response.
-  humanURL: https://floodrisktracker.steadfast.com.au/
-  baseURL: https://floodrisktracker.steadfast.com.au
-  tags:
-  - Flood Risk
-  - Natural Catastrophe
-  - Address
-  - Geospatial
-  - Insurance
-  - Australia
-  properties:
-  - type: OpenAPI
-    url: openapi/steadfast-group-flood-risk-tracker-openapi.yml
-    name: Flood Risk Tracker OpenAPI 3.1 (derived from observed traffic)
-  - type: Overlay
-    url: overlays/steadfast-group-flood-risk-tracker-overlay.yaml
-  - type: Examples
-    url: examples/steadfast-group-flood-risk-tracker-examples.yml
-    name: Verbatim live request and response pairs
-  - type: ErrorCatalog
-    url: errors/steadfast-group-problem-types.yml
-  - type: DataModel
-    url: data-model/steadfast-group-data-model.yml
-  - type: Conventions
-    url: conventions/steadfast-group-conventions.yml
-  - type: MCPServer
-    url: mcp/steadfast-group-mcp.yml
-    name: Candidate MCP tools derived from the OpenAPI (no Steadfast MCP server exists)
-  - type: ToolCrosswalk
-    url: mcp/steadfast-group-tool-crosswalk.yml
-  - type: AgentSkill
-    url: skills/steadfast-group-flood-risk-lookup.md
-  - type: Authentication
-    url: authentication/steadfast-group-authentication.yml
-    name: No authentication required or accepted
 - aid: steadfast-group:identity
   name: Steadfast Identity (OpenID Connect)
   description: >-
-    Steadfast Group's Okta-hosted OpenID Connect provider, issuer https://idp.steadfast.com.au.
-    It fronts the credentialed broker portal used by the Steadfast Network's 414 brokerages and,
-    by inference from the shared estate, internal and partner applications. The discovery
-    document is anonymously readable and advertises authorization, token, userinfo, JWKS,
-    introspection, revocation, device-authorization, dynamic-client-registration and logout
-    endpoints, with PKCE S256 and DPoP proof-of-possession supported. Client credentials are not
-    self-serve - anonymous dynamic client registration returns 403 - so this is a discoverable
-    but commercially gated surface, listed because its contract is genuinely machine-readable.
+    Steadfast Group's Okta-hosted OpenID Connect provider, issuer https://idp.steadfast.com.au. It fronts
+    the credentialed broker portal used by the Steadfast Network's 414 brokerages and, by inference from
+    the shared estate, internal and partner applications. The discovery document is anonymously readable
+    and advertises authorization, token, userinfo, JWKS, introspection, revocation, device-authorization,
+    dynamic-client-registration and logout endpoints, with PKCE S256 and DPoP proof-of-possession supported.
+    Client credentials are not self-serve - anonymous dynamic client registration returns 403 - so this
+    is a discoverable but commercially gated surface, listed because its contract is genuinely machine-readable.
   humanURL: https://broker.steadfast.com.au/
   baseURL: https://idp.steadfast.com.au
   tags:
@@ -143,7 +96,57 @@ apis:
     url: scopes/steadfast-group-scopes.yml
   - type: Authentication
     url: authentication/steadfast-group-authentication.yml
+- aid: steadfast-group:steadfast-group-address-api
+  name: Steadfast Group Address API
+  description: Australian address resolution against G-NAF identifiers.
+  humanURL: https://floodrisktracker.steadfast.com.au/
+  baseURL: https://floodrisktracker.steadfast.com.au
+  tags:
+  - Address
+  properties:
+  - type: OpenAPI
+    url: openapi/steadfast-group-address-api-openapi.yml
+  - type: Examples
+    url: examples/steadfast-group-flood-risk-tracker-examples.yml
+  - type: ErrorCatalog
+    url: errors/steadfast-group-problem-types.yml
+  - type: DataModel
+    url: data-model/steadfast-group-data-model.yml
+  - type: Conventions
+    url: conventions/steadfast-group-conventions.yml
+  - type: ToolCrosswalk
+    url: mcp/steadfast-group-tool-crosswalk.yml
+  - type: Authentication
+    url: authentication/steadfast-group-authentication.yml
+- aid: steadfast-group:steadfast-group-risk-api
+  name: Steadfast Group Risk API
+  description: Natural-catastrophe flood risk layers for a resolved address.
+  humanURL: https://floodrisktracker.steadfast.com.au/
+  baseURL: https://floodrisktracker.steadfast.com.au
+  tags:
+  - Risk
+  properties:
+  - type: OpenAPI
+    url: openapi/steadfast-group-risk-api-openapi.yml
+  - type: Examples
+    url: examples/steadfast-group-flood-risk-tracker-examples.yml
+  - type: ErrorCatalog
+    url: errors/steadfast-group-problem-types.yml
+  - type: DataModel
+    url: data-model/steadfast-group-data-model.yml
+  - type: Conventions
+    url: conventions/steadfast-group-conventions.yml
+  - type: ToolCrosswalk
+    url: mcp/steadfast-group-tool-crosswalk.yml
+  - type: Authentication
+    url: authentication/steadfast-group-authentication.yml
 common:
+- type: Overlay
+  url: overlays/steadfast-group-flood-risk-tracker-overlay.yaml
+- type: MCPServer
+  url: mcp/steadfast-group-mcp.yml
+- type: AgentSkill
+  url: skills/steadfast-group-flood-risk-lookup.md
 - type: AgenticAccess
   url: agentic-access/steadfast-group-agentic-access.yml
 - type: DomainSecurity
