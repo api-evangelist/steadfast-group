@@ -104,7 +104,7 @@ apis:
   - Identity
   - OpenID Connect
   - Authentication
-  - Single Sign-On
+  - SSO
   - Partner Gated
   tags_raw:
   - Identity
