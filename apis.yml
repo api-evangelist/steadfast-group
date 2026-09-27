@@ -150,6 +150,8 @@ apis:
   humanURL: https://floodrisktracker.steadfast.com.au/
   baseURL: https://floodrisktracker.steadfast.com.au
   tags:
+  - Risk Management
+  tags_raw:
   - Risk
   properties:
   - type: OpenAPI
