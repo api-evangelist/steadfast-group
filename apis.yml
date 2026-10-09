@@ -51,6 +51,9 @@ accessModel:
   trial: false
   try_now: false
   public: false
+  gated: partner
+  gated_source:
+  - tag:Partner Gated
   label: Self-serve signup
   confidence: medium
   source:
@@ -70,7 +73,6 @@ tags:
 - Underwriting Agency
 - Agency Management
 - ACORD
-- Partner Gated
 - New Zealand
 tags_raw:
 - Insurance
@@ -82,7 +84,6 @@ tags_raw:
 - Underwriting Agency
 - Agency Management
 - ACORD
-- Partner Gated
 - New Zealand
 created: '2026-07-25'
 modified: '2026-07-25'
@@ -259,3 +260,5 @@ common:
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
+x-tags-removed:
+- Partner Gated
