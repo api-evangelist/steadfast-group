@@ -87,6 +87,33 @@ paths:
           $ref: '#/components/responses/ValidationProblem'
 components:
   schemas:
+    ValidationProblemDetails:
+      type: object
+      title: ValidationProblemDetails
+      description: RFC 9457 problem details as emitted by ASP.NET Core model validation.
+      properties:
+        type:
+          type: string
+          format: uri
+          description: Problem type URI. Observed as an RFC 9110 status-code section link.
+        title:
+          type: string
+        status:
+          type: integer
+        errors:
+          type: object
+          description: Map of parameter name to an array of validation messages.
+          additionalProperties:
+            type: array
+            items:
+              type: string
+        traceId:
+          type: string
+          description: W3C Trace Context `traceparent` value for the failed request.
+      required:
+      - type
+      - title
+      - status
     RiskLayer:
       type: object
       title: RiskLayer
@@ -133,33 +160,6 @@ components:
           - /v1/
       required:
       - layerId
-    ValidationProblemDetails:
-      type: object
-      title: ValidationProblemDetails
-      description: RFC 9457 problem details as emitted by ASP.NET Core model validation.
-      properties:
-        type:
-          type: string
-          format: uri
-          description: Problem type URI. Observed as an RFC 9110 status-code section link.
-        title:
-          type: string
-        status:
-          type: integer
-        errors:
-          type: object
-          description: Map of parameter name to an array of validation messages.
-          additionalProperties:
-            type: array
-            items:
-              type: string
-        traceId:
-          type: string
-          description: W3C Trace Context `traceparent` value for the failed request.
-      required:
-      - type
-      - title
-      - status
   responses:
     ValidationProblem:
       description: The required query parameter was missing. Returned as RFC 9457 problem details (ASP.NET Core `ValidationProblemDetails`).
