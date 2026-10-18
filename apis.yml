@@ -66,7 +66,7 @@ image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.j
 tags:
 - Insurance
 - Australia
-- Brokers
+- Brokerage
 - Insurance Broker Network
 - General Insurance
 - Property and Casualty
@@ -85,6 +85,7 @@ tags_raw:
 - Agency Management
 - ACORD
 - New Zealand
+- Brokers
 created: '2026-07-25'
 modified: '2026-07-25'
 specificationVersion: '0.23'
@@ -106,7 +107,6 @@ apis:
   - OpenID Connect
   - Authentication
   - SSO
-  - Partner Gated
   tags_raw:
   - Identity
   - OpenID Connect
