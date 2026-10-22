@@ -1,0 +1,43 @@
+name: Steadfast Group Regulatory Posture
+generated: '2026-10-20'
+method: searched
+source: https://www.steadfast.com.au/privacy-policy/
+description: Regulatory posture signals read from Steadfast Group's own Privacy Policy (www.steadfast.com.au). The Legal page (https://www.steadfast.com.au/legal/, HTTP 200) was also read and spoke to none of the catalog signals.
+signals:
+- signal: data_subject_request
+  url: https://www.steadfast.com.au/privacy-policy/
+  section: Erasure / Portability
+  note: EU/UK residents are given access, rectification, erasure, restriction, portability and objection rights; erasure is conditional on listed grounds.
+  evidence:
+    source: https://www.steadfast.com.au/privacy-policy/
+    http_status: 200
+    fetched: '2026-10-20'
+    quote: "Erasure You can ask us to erase your personal information, but only where: it is no longer needed for the purposes for which it was collected; or you have withdrawn your consent (where the data processing was based on consent); or following a successful right to object (see 'Objection' below); or it has been processed unlawfully; or to comply with a legal obligation to which we are subject."
+  additional_quotes:
+  - "Portability You can ask us to provide your personal information to you in a structured, commonly used, machine-readable format but case only where: the processing is based on your consent or on the performance of a contract with you; and the processing is carried out by automated means."
+- signal: data_retention
+  url: https://www.steadfast.com.au/privacy-policy/
+  note: Purpose-bound retention with destruction when no longer needed; no specific retention periods are stated.
+  evidence:
+    source: https://www.steadfast.com.au/privacy-policy/
+    http_status: 200
+    fetched: '2026-10-20'
+    quote: "If the purpose for which your personal information is collected is no longer served by the retention of such data, or when the retention is no longer necessary for any other legal or business purpose, we will ensure that the hard copy of your personal information will be completely destroyed and electronic personal information as much as possible."
+- signal: data_residency
+  url: https://www.steadfast.com.au/privacy-policy/
+  section: Transfer of personal information overseas
+  note: Discloses that service providers outside the residence country (e.g. Malaysia, Philippines, Vietnam, US) may process data; this is a cross-border transfer disclosure, not a residency commitment.
+  evidence:
+    source: https://www.steadfast.com.au/privacy-policy/
+    http_status: 200
+    fetched: '2026-10-20'
+    quote: "Some of the third party service providers to whom we disclose personal information are located in countries outside of your country of residence, for example, Australia (or, in relation to New Zealand, outside New Zealand, or in relation to Singapore, outside Singapore) such as Malaysia, the Philippines, Vietnam and the United States of America."
+- signal: incident_notification
+  url: https://www.steadfast.com.au/privacy-policy/
+  section: Security of your personal information
+  note: Commits to notify individuals of material breaches where required by law; no fixed timeframe.
+  evidence:
+    source: https://www.steadfast.com.au/privacy-policy/
+    http_status: 200
+    fetched: '2026-10-20'
+    quote: "We will where required by applicable Privacy Law, as soon as reasonably possible, notify you of material security breach concerning your personal information."

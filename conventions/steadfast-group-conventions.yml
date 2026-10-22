@@ -57,6 +57,7 @@ filtering_and_expansion:
   supported: false
   detail: No field selection, sparse fieldsets, sorting, or expansion parameters are supported.
 idempotency:
+  coverage: na
   idempotency_key_supported: false
   detail: >-
     No Idempotency-Key header or equivalent is accepted. It is not applicable here - the API
@@ -110,3 +111,12 @@ security_headers_observed:
   note: >-
     HSTS max-age is 30 days, below the 1-year value required for HSTS preload eligibility, and
     no includeSubDomains or preload directive is present. `x-powered-by` leaks the server stack.
+reversibility:
+  coverage: na
+  detail: >-
+    Not applicable. The only documented-by-derivation surface (Flood Risk Tracker JSON API on
+    floodrisktracker.steadfast.com.au) exposes two safe GET operations (find_address,
+    get_flood_risk) and no write operations, so there is nothing to reverse. Steadfast publishes no
+    developer documentation stating any cancel/void/undo path for any other surface.
+  write_surfaces: []
+  dry_run_mode: na

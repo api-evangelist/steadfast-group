@@ -1,0 +1,37 @@
+generated: '2026-10-20'
+method: derived
+generator: derive-vocabulary.py
+source:
+- openapi/steadfast-group-address-api-openapi.yml
+- openapi/steadfast-group-risk-api-openapi.yml
+vocabulary:
+  name: Steadfast Group Domain Vocabulary
+  description: 'Terms declared by Steadfast Group''s own API contract: its resource groups, objects and enumerations, with the contract''s definitions.
+    Derived, not authored.'
+  version: '2026-10-20'
+  terms:
+  - term: Address
+    definition: Australian address resolution against G-NAF identifiers.
+    tags:
+    - Resource Group
+    source: openapi/steadfast-group-address-api-openapi.yml
+  - term: Risk
+    definition: Natural-catastrophe flood risk layers for a resolved address.
+    tags:
+    - Resource Group
+    source: openapi/steadfast-group-risk-api-openapi.yml
+  - term: ValidationProblemDetails
+    definition: RFC 9457 problem details as emitted by ASP.NET Core model validation.
+    tags:
+    - Object
+    source: openapi/steadfast-group-address-api-openapi.yml#/components/schemas/ValidationProblemDetails
+  - term: AddressCandidate
+    definition: A candidate Australian address resolved from free text.
+    tags:
+    - Object
+    source: openapi/steadfast-group-address-api-openapi.yml#/components/schemas/AddressCandidate
+  - term: RiskLayer
+    definition: One natural-catastrophe hazard layer scored for an address.
+    tags:
+    - Object
+    source: openapi/steadfast-group-risk-api-openapi.yml#/components/schemas/RiskLayer

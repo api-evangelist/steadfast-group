@@ -1,3 +1,4 @@
+name: Steadfast Group agent skills
 generated: '2026-07-25'
 method: generated
 note: >-
@@ -7,7 +8,10 @@ note: >-
 skills:
   - file: steadfast-group-flood-risk-lookup.md
     name: Look up flood and storm-surge risk for an Australian address
-    api: openapi/steadfast-group-flood-risk-tracker-openapi.yml
+    api: openapi/steadfast-group-address-api-openapi.yml
+    apis:
+      - openapi/steadfast-group-address-api-openapi.yml
+      - openapi/steadfast-group-risk-api-openapi.yml
     operations:
       - findAddress
       - getFloodRisk

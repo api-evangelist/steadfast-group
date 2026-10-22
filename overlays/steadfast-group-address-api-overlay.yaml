@@ -1,0 +1,53 @@
+overlay: 1.0.0
+info:
+  title: API Evangelist enhancements for the Steadfast Flood Risk Tracker Address API
+  version: 1.0.0
+extends: openapi/steadfast-group-address-api-openapi.yml
+x-apievangelist:
+  generated: '2026-10-20'
+  method: generated
+  note: 'The base document in openapi/ was itself derived by API Evangelist from observed traffic, because
+    Steadfast Group publishes no specification. This overlay carries the catalog annotations kept separate
+    from the observed contract so the two never blur - provenance, agent-access classification, and the
+    caveats a consumer needs before depending on an undocumented surface. Regenerated 2026-10-20 per split
+    spec: actions retargeted to the paths and schemas that exist in this file.'
+actions:
+- target: $.info
+  update:
+    x-apievangelist-provider: steadfast-group
+    x-apievangelist-provider-name: Steadfast Group
+    x-apievangelist-country: AU
+    x-apievangelist-industry: Insurance
+    x-apievangelist-source: derived-from-observed-traffic
+    x-apievangelist-provider-published-spec: false
+    x-apievangelist-supported: false
+    x-apievangelist-auth: none
+    x-apievangelist-consumer-warning: Undocumented and unsupported. Steadfast Group has made no commitment
+      to this interface, publishes no deprecation policy and operates no status page. It may change or
+      close without notice. Verify current behaviour before building on it, and respect the restrictive
+      CORS policy and any Cloudflare bot protections.
+- target: $.info
+  update:
+    x-apievangelist-data-sources:
+    - name: G-NAF (Geocoded National Address File)
+      operator: Geoscape Australia
+      role: address identity namespace
+    - name: Swiss Re natural catastrophe hazard models
+      role: fluvial flood and storm surge risk layers
+- target: $.paths['/api/risk/find_address'].get
+  update:
+    x-agentic-access:
+      action-class: connected
+      consequence: read
+      token:
+        required: false
+        max-ttl-seconds: 3600
+      audit: optional
+      human-in-the-loop: not-required
+    x-apievangelist-notes: Safe, anonymous, retryable. Returns an unbounded array with no server-side
+      paging - agents should cap client-side. Empty array means no match, not an error.
+- target: $.components.schemas.AddressCandidate
+  update:
+    x-apievangelist-quirks:
+    - latitude and longitude were null on every observed response
+    - id contains pipe characters that require URL encoding when used as a query parameter

@@ -1,0 +1,172 @@
+generated: '2026-10-20'
+method: derived
+source: the pre-flight dossier, apis.yml pointers, spec servers, well-known, vendors -- nothing fetched here
+generator: derive-hosts.py
+summary:
+  hosts: 13
+  own: 5
+  other_domain: 7
+  platform: 1
+  roles:
+  - api
+  - other
+  - website
+hosts:
+- host: api.com.au
+  found_by:
+  - contract-discovery
+  types: []
+  serves: []
+  registrable_domain: api.com.au
+  role: api
+  relation: other-domain
+- host: api.com.sg
+  found_by:
+  - contract-discovery
+  types: []
+  serves: []
+  registrable_domain: api.com.sg
+  role: api
+  relation: other-domain
+- host: api.steadfastnz.nz
+  found_by:
+  - contract-discovery
+  types: []
+  serves: []
+  registrable_domain: steadfastnz.nz
+  role: api
+  relation: other-domain
+- host: broker.steadfast.com.au
+  found_by:
+  - pointer
+  - apis[]
+  - probed
+  - site-links
+  - well-known
+  types:
+  - PartnerPortal
+  serves:
+  - docs
+  registrable_domain: steadfast.com.au
+  role: other
+  relation: own
+- host: floodrisktracker.steadfast.com.au
+  found_by:
+  - pointer
+  - apis[]
+  - probed
+  - site-links
+  - contract-discovery
+  - well-known
+  types:
+  - Tool
+  serves:
+  - api
+  - docs
+  registrable_domain: steadfast.com.au
+  role: other
+  relation: own
+- host: idp.steadfast.com.au
+  found_by:
+  - apis[]
+  - probed
+  - contract-discovery
+  - well-known
+  - vendor-detect
+  types: []
+  serves:
+  - api
+  - identity
+  vendor: okta
+  registrable_domain: steadfast.com.au
+  role: other
+  relation: own
+- host: investor.steadfast.com.au
+  found_by:
+  - pointer
+  - probed
+  - site-links
+  - well-known
+  types:
+  - InvestorRelations
+  serves: []
+  registrable_domain: steadfast.com.au
+  role: other
+  relation: own
+- host: steadfastagencies.com.au
+  found_by:
+  - pointer
+  - probed
+  - well-known
+  types:
+  - Website
+  serves: []
+  registrable_domain: steadfastagencies.com.au
+  role: website
+  relation: other-domain
+- host: www.linkedin.com
+  found_by:
+  - pointer
+  types:
+  - LinkedIn
+  serves: []
+  registrable_domain: linkedin.com
+  role: other
+  relation: platform
+- host: www.steadfast.com.au
+  found_by:
+  - pointer
+  - probed
+  - well-known
+  - vendor-detect
+  types:
+  - Website
+  - About
+  - BoardAndManagement
+  - Blog
+  - Contact
+  - PrivacyPolicy
+  - Legal
+  - CodeOfPractice
+  - Support
+  - TermsOfService
+  - Careers
+  - FindABroker
+  serves:
+  - cdn
+  vendor: cloudflare
+  registrable_domain: steadfast.com.au
+  role: website
+  relation: own
+- host: www.steadfast.com.sg
+  found_by:
+  - pointer
+  - probed
+  types:
+  - Website
+  serves: []
+  registrable_domain: steadfast.com.sg
+  role: website
+  relation: other-domain
+- host: www.steadfastlife.com.au
+  found_by:
+  - pointer
+  - probed
+  - well-known
+  types:
+  - Website
+  serves: []
+  registrable_domain: steadfastlife.com.au
+  role: website
+  relation: other-domain
+- host: www.steadfastnz.nz
+  found_by:
+  - pointer
+  - probed
+  - well-known
+  types:
+  - Website
+  serves: []
+  registrable_domain: steadfastnz.nz
+  role: website
+  relation: other-domain

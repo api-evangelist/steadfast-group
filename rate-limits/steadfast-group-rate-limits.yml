@@ -1,0 +1,12 @@
+name: Steadfast Group rate limits
+generated: '2026-10-20'
+method: none
+source: conventions/steadfast-group-conventions.yml
+limit_count: 0
+limits: []
+headers_observed: []
+note: >-
+  No rate limits are published anywhere - Steadfast has no developer documentation. Earlier live
+  probes of the anonymous Flood Risk Tracker API (floodrisktracker.steadfast.com.au) observed no
+  RateLimit, X-RateLimit or Retry-After headers; the host is Cloudflare-fronted, so unadvertised
+  bot/rate protection may apply.

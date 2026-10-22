@@ -1,5 +1,5 @@
 generated: '2026-07-25'
-method: searched
+method: none
 source: >-
   npm registry search, PyPI, NuGet (azuresearch), RubyGems and the Steadfast public site,
   probed 2026-07-25

@@ -1,7 +1,9 @@
 generated: '2026-07-25'
 method: derived
 status: candidate
-source: openapi/steadfast-group-flood-risk-tracker-openapi.yml
+source:
+- openapi/steadfast-group-address-api-openapi.yml
+- openapi/steadfast-group-risk-api-openapi.yml
 note: Steadfast Group publishes no MCP server. Searched the docs estate, npm (@modelcontextprotocol and
   steadfast-* packages, all of which are unrelated Bangladeshi courier libraries) and the public MCP registries
   on 2026-07-25 - nothing first-party exists. The tools below are a CANDIDATE surface derived from the
@@ -18,7 +20,7 @@ tools:
 - name: find_address
   description: Search Australian street addresses by free text and return candidate matches with their
     G-NAF identifiers. Returns an empty list for addresses outside Australia.
-  source_operation: openapi/steadfast-group-flood-risk-tracker-openapi.yml#findAddress
+  source_operation: openapi/steadfast-group-address-api-openapi.yml#findAddress
   input_schema:
     type: object
     properties:
@@ -35,7 +37,7 @@ tools:
 - name: get_flood_risk
   description: Return Swiss Re natural-catastrophe flood risk layers - river/fluvial flood and coastal
     storm surge - for an Australian address identified by its G-NAF id.
-  source_operation: openapi/steadfast-group-flood-risk-tracker-openapi.yml#getFloodRisk
+  source_operation: openapi/steadfast-group-risk-api-openapi.yml#getFloodRisk
   input_schema:
     type: object
     properties:

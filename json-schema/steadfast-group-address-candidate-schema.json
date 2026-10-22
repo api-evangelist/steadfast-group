@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/steadfast-group/main/json-schema/steadfast-group-address-candidate-schema.json",
+  "title": "AddressCandidate",
+  "description": "A candidate Australian address resolved from free text.",
+  "x-generated": "2026-10-20",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/steadfast-group-address-api-openapi.yml#/components/schemas/AddressCandidate",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Pipe-delimited address identifier. Observed form `AU|GNAF|<G-NAF PID>` - country code, address dataset (G-NAF, the Geocoded National Address File), and the persistent identifier. This value is the `addressId` input to `getFloodRisk`."
+    },
+    "fullAddress": {
+      "type": "string",
+      "description": "Upper-case formatted address including state and postcode."
+    },
+    "latitude": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "description": "Observed `null` on every candidate returned; the tool geocodes client-side via Google Maps instead."
+    },
+    "longitude": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "description": "Observed `null` on every candidate returned."
+    }
+  },
+  "required": [
+    "id",
+    "fullAddress"
+  ]
+}

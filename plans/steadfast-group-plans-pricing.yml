@@ -1,0 +1,16 @@
+name: Steadfast Group pricing
+generated: '2026-10-20'
+method: none
+source: https://www.steadfast.com.au/sitemap.xml
+audience: unclear
+pricing_basis: none
+published: false
+delivery:
+  model: unclear
+plan_count: 0
+plans: []
+note: >-
+  Steadfast Group publishes no API or platform pricing. The public sitemap (200, 2026-10-20) lists no
+  pricing or plans page; the Steadfast Client Trading Platform and Steadfast Apps are available only to
+  Steadfast network brokers and insurer/partner connectivity is arranged commercially. The anonymous
+  Flood Risk Tracker API carries no published price.

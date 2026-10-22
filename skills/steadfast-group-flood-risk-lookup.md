@@ -5,7 +5,10 @@ description: >-
   using Steadfast Group's public Flood Risk Tracker API. Use when someone asks how exposed an
   Australian property is to flooding, or needs a natural-catastrophe indication for an address
   before quoting or advising on home, strata or business property insurance.
-api: openapi/steadfast-group-flood-risk-tracker-openapi.yml
+api: openapi/steadfast-group-address-api-openapi.yml
+apis:
+  - openapi/steadfast-group-address-api-openapi.yml
+  - openapi/steadfast-group-risk-api-openapi.yml
 operations:
   - findAddress
   - getFloodRisk

@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/steadfast-group/main/json-schema/steadfast-group-risk-layer-schema.json",
+  "title": "RiskLayer",
+  "description": "One natural-catastrophe hazard layer scored for an address.",
+  "x-generated": "2026-10-20",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/steadfast-group-risk-api-openapi.yml#/components/schemas/RiskLayer",
+  "type": "object",
+  "properties": {
+    "layerId": {
+      "type": "string",
+      "description": "Hazard layer identifier. Observed values are `FL_Fluvial_SwissRe` (river flood) and `FL_Surge_SwissRe` (coastal storm surge); the `_SwissRe` suffix identifies Swiss Re as the hazard data source."
+    },
+    "valueLabel": {
+      "type": "string",
+      "description": "Human-readable hazard value. Observed values include `Outside` (outside the modelled hazard zone) and return-period labels such as `50 years`."
+    },
+    "intensity": {
+      "type": "string",
+      "description": "Hazard intensity as a decimal string. Observed `1` through `8.9`."
+    },
+    "riskIndex": {
+      "type": "integer",
+      "description": "Numeric risk band the tool maps to a CSS class (`risk-<n>`). Observed values 1 and 7; the tool renders a graduated bar from this value."
+    },
+    "riskDescription": {
+      "type": "string",
+      "description": "Risk band label the tool renders as \"<value> Risk\". Observed values `Low` and `High`. When absent/empty the tool renders \"No Risk Data\"."
+    },
+    "details": {
+      "type": "string",
+      "description": "A JSON document embedded as a string (double-encoded, CRLF-formatted) carrying the underlying Swiss Re model attributes for the layer - e.g. `FF Return Period (SR)`, `FF Protection (SR)`, `FF Schema (SR)`, `FF Code (SR)`, `FF Frequency (SR)` for fluvial flood, and `Surge Return Period` for storm surge. Consumers must parse this string as JSON.",
+      "contentMediaType": "application/json"
+    },
+    "version": {
+      "type": "string",
+      "description": "Layer data version. Observed `/v1/` on every layer."
+    }
+  },
+  "required": [
+    "layerId"
+  ]
+}
