@@ -1,0 +1,74 @@
+generated: '2026-10-20'
+method: searched
+source:
+- https://www.steadfast.com.au/well-covered/media-releases/steadfast-client-trading-platform-professional-indemnity-insurer-panel-expands/
+- https://zapier.com/apps/steadfast-group/integrations
+- https://n8n.io/integrations/steadfast-group/
+- https://composio.dev/toolkits/steadfast-group
+- https://monid.ai/tools/steadfast-group
+checked:
+- https://www.steadfast.com.au/sitemap.xml
+- https://www.steadfast.com.au/well-covered/media-releases/steadfast-client-trading-platform-professional-indemnity-insurer-panel-expands/
+- https://zapier.com/apps/steadfast/integrations
+- https://www.make.com/en/integrations/steadfast
+- https://n8n.io/integrations/steadfast/
+- https://composio.dev/toolkits/steadfast-group
+- https://monid.ai/tools/steadfast-group
+- https://n8n.io/integrations/steadfast-group/
+- https://zapier.com/apps/steadfast-group/integrations
+- https://data.gov.au/data/dataset/asic-afs-licensee
+- https://data.gov.au/data/dataset/asic-credit-licensee
+- https://www.apra.gov.au/register-of-authorised-deposit-taking-institutions
+- https://www.apra.gov.au/registers/list-registered-general-insurers
+summary: null
+marketplace_apps: []
+edges:
+- partner_name: Chubb
+  partner: chubb
+  partner_match: domain
+  type: claimed
+  relationship: carrier-coverage
+  direction: unknown
+  evidence: https://www.steadfast.com.au/well-covered/media-releases/steadfast-client-trading-platform-professional-indemnity-insurer-panel-expands/
+  quote: The Steadfast Client Trading Platform (SCTP) has expanded its professional indemnity (PI) options with
+    Chubb joining the panel. PI is the third product Chubb is offering through the SCTP
+  note: Chubb is an insurer on the SCTP quoting panel (joined 2019); a commercial connection, not a public API integration.
+- partner_name: ASIC Australian Financial Services licensees
+  partner: null
+  partner_match: register-name
+  type: register
+  channel: regulator-register
+  relationship: standard-participant
+  direction: partner-built
+  evidence: https://data.gov.au/data/dataset/ab7eddce-84df-4098-bc8f-500d0d9776d1/resource/d98a113d-6b50-40e6-b65f-2612efc877f4/download/afs_lic_202610.csv
+  category: Australian financial services licence (ASIC)
+  contract_reference:
+    register: ASIC Australian Financial Services licensees
+    spec_file: null
+    standard: null
+    role: afs-licensee
+    registrations:
+    - registered_name: STEADFAST GROUP LTD
+      licences:
+      - AFS licence
+      - general insurance products
+      register_country: AU
+      matched_domain: null
+      matched_by: register-name
+      register_id: AFSL 254928
+      abn_acn: '98073659677'
+      state: NSW
+      start: 10/03/2004
+      register_name_note: 'register-name ''steadfastgroup'' = steadfast-group; no wikidata P856; AU presence: Australia
+        tag'
+    signal_note: 'participation only: a regulator licence / authorisation listing; no API conformance is published
+      by this register'
+    detected_by: sweep-australia-afs-adi-registers.py
+    detected: '2026-10-22'
+    matched_by: register-name
+    identity_source: register-name
+    identity_note: register gave only the name; exact normalised match to the repo's apis.yml name, one repo, Wikidata
+      P856 not contradicting (Kin 2026-10-20 decision 2)
+  detected_by: sweep-australia-afs-adi-registers.py
+  first_seen: '2026-10-22'
+templates: []
